@@ -9,10 +9,10 @@ As an activator, you start by asking `**qrl?**`, after that you may gon on with 
 You			: cq sota de xy2abc xy/jo023 k  
 qsoTrainer	: xy3cba  
 You			: xy3cba gd 559 559 bk  
-qsoTrainer	: tu 559 559 ref xy/ja134 bk
+qsoTrainer	: tu 559 559 ref xy/ja134 bk  
 You			: rr 73 tu  
-qsoTrainer	: tu e e
-You:        : qrz 
+qsoTrainer	: tu e e  
+You:        : qrz  
 
 After a QRZ, the next Call is coming.  
 
@@ -25,7 +25,7 @@ qsoTrainer	: xy2abc gd 589 589 bk
 You			: tu 5nn 5nn ref xy/ja134 bk  
 qsoTrainer	: rr 73 tu  
 You			: tu e e  
-qsoTrainer	: qrz
+qsoTrainer	: qrz 
 
 
 ## Requirements
