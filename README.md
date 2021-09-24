@@ -8,11 +8,19 @@ As an activator, you start by asking `**qrl?**`, after that you may gon on with 
 
 You			: cq sota de xy2abc xy/jo023 k  
 qsoTrainer	: xy3cba  
-You			: xy3cba gd 559 559 bk  
+You			: xy3cba 559 559 bk  
 qsoTrainer	: tu 559 559 ref xy/ja134 bk  
-You			: rr 73 tu  
-qsoTrainer	: tu e e  
+You			: rr 73 e e  
+qsoTrainer	: ee  
 You:        : qrz  
+
+Activator: CQ SOTA DE XY2ABC XY/KB023 K
+Chaser   : XY2DEF
+Activator: XY2DEF 559 559 BK
+Chaser   : TU 559 559 REF XY/KB045 XY/KB045 BK
+Activator: RR 73 E E
+Chaser   : EE
+Activator: QRZ
 
 After a QRZ, the next Call is coming.  
 
@@ -21,10 +29,10 @@ if you give a `**kaka**`, the qsoTrainer will act as an Activator, you are the c
 
 qsoTrainer	: qrl? cq sota de xy3cba xy/ja134 k  
 You			: xy2abc  
-qsoTrainer	: xy2abc gd 589 589 bk  
+qsoTrainer	: xy2abc 589 589 bk  
 You			: tu 5nn 5nn ref xy/ja134 bk  
-qsoTrainer	: rr 73 tu  
-You			: tu e e  
+qsoTrainer	: rr 73 e e  
+You			: ee  
 qsoTrainer	: qrz 
 
 
