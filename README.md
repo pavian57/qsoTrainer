@@ -44,9 +44,9 @@ There is not much space for a complete summitlist, i have stripped down to to su
 
 - ESP8266 Microcontroller , i used Wifikit 8 from Heltec.  
 - Oled Display 128x32 I2C  
-- Pushbutton  
-- Potentiometer 10k  
+- 3 Pushbutton  
 - 3.5mm Jack 3pol female for keyer
+- 3.5mm Jack 3pol female for headset
 
 
 ## Installation
@@ -64,6 +64,10 @@ and these instructions.
 **Oled**
 get the Oled Library from Github  
 `https://github.com/durydevelop/arduino-lib-oled`  
+
+Change line 99 in oled.cpp to
+0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // ~  space 
+makes a space instead a ~.
 
 **source**
 
@@ -85,6 +89,7 @@ Use the Arduino IDE or VS Code
 
 1. Connect the ESP8266, setup SPIFFS and upload data directory.   
 2. Upload Sketch.  
+3. connect keyer and or beeper or headset and start exploring qsoTrainer
 
 
 ## Future Improvements
