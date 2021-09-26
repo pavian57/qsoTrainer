@@ -14,13 +14,6 @@ You			: rr 73 e e
 qsoTrainer	: ee  
 You:        : qrz  
 
-Activator: CQ SOTA DE XY2ABC XY/KB023 K
-Chaser   : XY2DEF
-Activator: XY2DEF 559 559 BK
-Chaser   : TU 559 559 REF XY/KB045 XY/KB045 BK
-Activator: RR 73 E E
-Chaser   : EE
-Activator: QRZ
 
 After a QRZ, the next Call is coming.  
 
