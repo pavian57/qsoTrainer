@@ -118,11 +118,11 @@ void setup() {
     Serial.print("Setting Farnsworth to ");
     Serial.println(actualFarnsWpm);
     Serial.println("NEU");
-      EEPROM.begin(512);
-      addr=0;
-      addr += EEPROM.put(addr, actualWpm);
-      addr += EEPROM.put(addr, actualFarnsWpm);
-      EEPROM.end();
+    EEPROM.begin(512);
+    addr=0;
+    addr += EEPROM.put(addr, actualWpm);
+    addr += EEPROM.put(addr, actualFarnsWpm);
+    EEPROM.end();
     
   };
   
