@@ -37,7 +37,7 @@ void addString(String txt)
 }
 
 
-void setFont(boolean bold)
+void setFont(bool bold)
 {
   if (bold) {}
 }

@@ -1,6 +1,8 @@
-# Simple cw qsoTrainer by hb9fvk (ruedi)
+# Simple cw qsoTrainer by hb9fvk (ruedi) for Arduino 
 
 This is a small program for esp8266 Arduino that creates a cw SOTA qsoTrainer, either as a Chaser or Activator, depending what you give with your key.
+
+https://www.aliexpress.com/item/4001018066912.html?spm=a2g0o.cart.0.0.532b3c00ry3sqO&mp=1
 
 Entering `**sksk**` goes back to the first step. 
 
@@ -32,13 +34,17 @@ qsoTrainer	: qrz
 ## Requirements
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
 
-I made some tools to upload files to SPIFFS, that has Callsign, Name of OM and a list of Summits. All together wirh an index file for faster access. If there are no files, random call and summit will be made.  
+I took names.csv from https://hb9sota.ch/names_hb9bin/names.csv, cleaned up a little bit and created a Index on linenumbers for easy access. I did the same to summitslist.csv, that can be downloaded here https://www.sotadata.org.uk/summitslist.csv.
 There is not much space for a complete summitlist, i have stripped down to to summit only. As this was'nt enough, i purged all not european countries. 
+If there are no files, random call and summit will be made by the code.
+
+I made files for all continents.
 
 
 **Software**
 - Arduino and VS Code  
 - Arduino IDE
+- LittleFS
 
 **Hardware**
 
@@ -65,9 +71,9 @@ and these instructions.
 get the Oled Library from Github  
 `https://github.com/durydevelop/arduino-lib-oled`  
 
-Change line 99 in oled.cpp to
-0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // ~  space 
-makes a space instead a ~.
+Change line 99 in oled.cpp to  
+0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // ~  space   
+makes a space instead a ~.  
 
 **source**
 
