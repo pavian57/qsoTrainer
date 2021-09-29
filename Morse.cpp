@@ -115,12 +115,7 @@ void Morse::sendCode(String text)
   for(int i=0; code[i]; i++)
   {
     switch( code[i] )
-    {
-       if (farnsLength == 0) {         
-          delay(dotLength);  
-      } else {
-          delay(farnsLength);
-      }
+    {      
       case '.': //dit      
         dot();          
         break;
@@ -133,7 +128,7 @@ void Morse::sendCode(String text)
         if (farnsLength == 0) {         
           delay(dotLength*3);  
         } else {
-          delay(farnsLength*3);
+          delay(farnsLength*3);          
         }
     }
   }

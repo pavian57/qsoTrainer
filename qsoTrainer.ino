@@ -1,10 +1,9 @@
 #include <Arduino.h>
+#include <EEPROM.h>
 
 #include <Button2.h>
 
-#include <EEPROM.h>
 #define USE_LittleFS
-
 
 // #include <FS.h>
 #include <LittleFS.h>
