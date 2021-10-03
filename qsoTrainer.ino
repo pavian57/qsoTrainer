@@ -196,23 +196,8 @@ void loop()
         actWord = "";  
 
       }
-
-    }
-
-     
-  
-  } else if (mode == 2) {
-
-   
-      /*Serial.print("Setting WPM to ");
-      Serial.println(actualWpm);
-      qsoDisplay::printWpm(actualWpm);
-      qsoDisplay::printFarnsWpm(actualFarnsWpm);
-
-     
-      updateElementLength(); */
+    } 
   }
-
 }
 
 
