@@ -67,6 +67,7 @@ static const struct {const char letter, *code;} MorseMap[] =
 
 enum qsoType{
 	NONE,
+	TRAINING, 
 	CHASER,
 	ACTIVATE
 };

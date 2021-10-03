@@ -79,6 +79,10 @@ String Morse::encode(String code)
   if (code == "-.-.-") {
     return "<ka>";
   }
+
+  if (code == ".-...") {
+    return "<as>";
+  }
   code.concat(" ");
   int lastPos = 0;
   int pos = code.indexOf(' ');
@@ -259,37 +263,50 @@ bool Morse::_checkRst(String _rst)
 void Morse::doQso(void)
 {
   tlg.trim();
-  if (strstr(tlg.c_str(), "<sk><sk>") != NULL) {
-    qsoDisplay::addString("<sk>");
-    tlg.replace("<sk><sk>", "");
-    sendCode("73");
-    Type = NONE; 
-    State = NADA; 
-  }
+  if (!Type == TRAINING) {
+    if (strstr(tlg.c_str(), "<sk><sk>") != NULL) {
+      qsoDisplay::addString("<sk>");
+      tlg.replace("<sk><sk>", "");
+      sendCode("73");
+      Type = NONE; 
+      State = NADA; 
+    }
 
-  if (strstr(tlg.c_str(), "qrl?") != NULL) {
-    qsoDisplay::addString("qrl?");
-    tlg.replace("qrl?", "");
-    Type = CHASER;
-    State = CQ; 
-  } 
-  if (strstr(tlg.c_str(), "<ka><ka>") != NULL) {
-    qsoDisplay::addString("<ka>");
-    tlg.replace("<ka><ka>", "");
-    Type = ACTIVATE;
-    State = STARTQSO; 
+    if (strstr(tlg.c_str(), "qrl?") != NULL) {
+      qsoDisplay::addString("qrl?");
+      tlg.replace("qrl?", "");
+      Type = CHASER;
+      State = CQ; 
+    } 
+    if (strstr(tlg.c_str(), "<ka><ka>") != NULL) {
+      qsoDisplay::addString("<ka>");
+      tlg.replace("<ka><ka>", "");
+      Type = ACTIVATE;
+      State = STARTQSO; 
+    }
+    if (strstr(tlg.c_str(), "<as><as>") != NULL) {
+      qsoDisplay::addString("<as>");
+      Type = TRAINING;
+      State = NADA; 
+    }
+    switch (Type) {
+      case ACTIVATE:
+        _qsoActivate();
+        break;
+      case (CHASER): 
+        _qsoChaser();
+        break;
+      default: 
+        break;
+    }
+  } else {
+    qsoDisplay::addString(tlg);
+    if (strstr(tlg.c_str(), "<as><as>") != NULL) {
+      qsoDisplay::addString("<as>");
+      Type = NONE;
+      State = NADA; 
+    }
   }
-  switch (Type) {
-    case ACTIVATE:
-      _qsoActivate();
-      break;
-    case (CHASER): 
-      _qsoChaser();
-      break;
-    default: 
-      break;
-  }
-
 
 
 }
