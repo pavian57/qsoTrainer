@@ -269,6 +269,7 @@ void Morse::doQso(void)
 
   if (strstr(tlg.c_str(), "qrl?") != NULL) {
     qsoDisplay::addString("qrl?");
+    tlg.replace("qrl?", "");
     Type = CHASER;
     State = CQ; 
   } 
@@ -322,8 +323,9 @@ if (tlg.length() >= _calllength && State == HISCALL1) {
   _hisCall = tlg;
   qsoDisplay::addString(_hisCall);
   sendCode(_hisCall);
-  
   qsoDisplay::addString(_hisCall);
+  sendCode("ur");
+  qsoDisplay::addString("ur");
   _RST = randomRST();
   sendCode(_RST);
   qsoDisplay::addString(_RST);
@@ -388,20 +390,11 @@ if (strstr(tlg.c_str(), "bk") != NULL && State == BK) {
     qsoDisplay::addString("rr");
     sendCode("73");
     qsoDisplay::addString("73");
-    sendCode("e");
-    qsoDisplay::addString("e");
-    sendCode("e");
-    qsoDisplay::addString("e");
-    State = E1;
+    sendCode("ee");
+    qsoDisplay::addString("ee");
+    State = HISCALL1;
   }
 
-if (strstr(tlg.c_str(), "ee") != NULL && State == E1) {
-    qsoDisplay::addString("ee");
-    tlg.replace("ee", "");
-    State = HISCALL1;
-    sendCode("qrz");
-    qsoDisplay::addString("qrz");
-  }
 }
 
 
@@ -475,25 +468,33 @@ void Morse::_qsoChaser(void)
   if (tlg == _ourCall && State == OURCALL) {      
       qsoDisplay::addString(tlg);
       tlg.replace(tlg, "");
-      State = RST1;  
+      State = UR;  
   }
 
-  if (tlg == _RST && State == RST2) {
-    qsoDisplay::addString(tlg);  
-    State = BK;
+  if (tlg == "ur" && State == UR) {
+    qsoDisplay::addString("ur");  
+    State = RST1;
   }
 
   if (tlg.length() == 3 && State == RST1) {
     if (_checkRst(tlg)) {
       _RST = tlg;
-      qsoDisplay::addString(tlg);
+      tlg.replace(_RST, "");
+      qsoDisplay::addString(_RST);
       State = RST2;
     }
  }
 
+ if (tlg == _RST && State == RST2) {
+    qsoDisplay::addString(_RST);  
+    State = BK;
+  }
+
 if (strstr(tlg.c_str(), "bk") != NULL && State == BK) {
     tlg.replace("bk", "");
     qsoDisplay::addString("bk");  
+    //sendCode("rr");
+    //qsoDisplay::addString("rr");      
     sendCode("tu");
     qsoDisplay::addString("tu");      
     _RST = randomRST();
@@ -525,20 +526,15 @@ if (strstr(tlg.c_str(), "73") != NULL && State == BYE) {
     State = END1;
   }
 
-if (strstr(tlg.c_str(), "e") != NULL && State == END2) {
-    tlg.replace("e", "");    
-    qsoDisplay::addString("e");
-    sendCode("ee");
+if (strstr(tlg.c_str(), "ee") != NULL && State == END1) {
+    tlg.replace("ee", "");    
     qsoDisplay::addString("ee");
-    State = QRZ;
+    
+    _ourCall = randomCall();
+    sendCode(_ourCall);
+    qsoDisplay::addString(_ourCall);
+    State = OURCALL;
   }  
-
-if (strstr(tlg.c_str(), "e") != NULL && State == END1) {    
-    tlg.replace("e", "");
-    qsoDisplay::addString("e");
-    State = END2;            
-  }  
-
 
 
 }
@@ -549,11 +545,13 @@ if (strstr(tlg.c_str(), "e") != NULL && State == END1) {
 
 Activator: CQ SOTA DE XY2ABC XY/KB023 K
 Chaser   : XY2DEF
-Activator: XY2DEF 559 559 BK
+Activator: XY2DEF UR 559 559 BK
 Chaser   : TU 559 559 REF XY/KB045 XY/KB045 BK
-Activator: RR 73 E E
-Chaser   : EE
-Activator: QRZ
+Activator: RR 73  EE
+Chaser   : XY2GHJ
+
+
+
 
 
 
