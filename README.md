@@ -6,7 +6,7 @@ https://www.aliexpress.com/item/4001018066912.html?spm=a2g0o.cart.0.0.532b3c00ry
 
 Entering `**sksk**` goes back to the first step. 
 
-As an activator, you start by asking `**qrl?**`, after that you may gon on with cq sota. You are the activator.  
+1. As an activator, you start by asking `**qrl?**`, after that you may gon on with cq sota. You are the activator.  
 
 You			: cq sota de xy2abc xy/jo023 k  
 qsoTrainer	: xy3cba  
@@ -16,11 +16,7 @@ You			: rr 73 ee
 qsoTrainer	: xy2ghj
 
 
-
-After a QRZ, the next Call is coming.  
-
-
-if you give a `**kaka**`, the qsoTrainer will act as an Activator, you are the chaser.  
+2. If you give a `**kaka**`, the qsoTrainer will act as an Activator, you are the chaser.  
 
 qsoTrainer	: qrl? cq sota de xy3cba xy/ja134 k  
 You			: xy2abc  
@@ -29,6 +25,10 @@ You			: tu 5nn 5nn ref xy/ja134 bk
 qsoTrainer	: rr 73 ee  
 You			: xy2ghj
 
+
+3. If you give a `**asas**`, the qsoTrainer will echo everything you give with the paddle.  
+
+give `**asas**` again to leave the trainer mode, the reset button doesn the same.
 
 
 ## Requirements
