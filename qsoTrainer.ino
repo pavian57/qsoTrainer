@@ -192,7 +192,8 @@ void loop()
         Serial.println("<");
         morse.tlg = actWord;
         morse.doQso();
-        Serial.println(morse.State);
+        Serial.print("State: "); Serial.print(morse.State);
+        Serial.print(" Type: "); Serial.println(morse.Type);        
         actWord = "";  
 
       }
