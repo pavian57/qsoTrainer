@@ -294,7 +294,7 @@ namespace qsoTrainer
       qsoDisplay::addString("qrl?");
       tlg.replace("qrl?", "");
       Type = CHASER;
-      State = CQ;
+      State = CQ;      
     }
     if (strstr(tlg.c_str(), "<ka><ka>") != NULL && Type != TRAINING)
     {
@@ -308,6 +308,7 @@ namespace qsoTrainer
       qsoDisplay::addString("<as>");
       Type = TRAINING;
       State = NADA;
+      nextStep = true;
     }
     switch (Type)
     {
@@ -328,7 +329,7 @@ namespace qsoTrainer
   void Morse::_qsoActivate(void)
   {
     tlg.trim();
-
+    nextStep = false;
     if (State == STARTQSO)
     {
       sendCode("qrl?");
@@ -366,6 +367,7 @@ namespace qsoTrainer
       sendCode("bk");
       qsoDisplay::addString("bk");
       State = TU;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "tu") != NULL && State == TU)
@@ -373,26 +375,29 @@ namespace qsoTrainer
       tlg.replace("tu", "");
       qsoDisplay::addString("tu");
       State = RST1;
+      nextStep = true;
     }
 
     if (_checkRst(tlg) && State == RST2)
     {
       qsoDisplay::addString(tlg);
       State = REF;
+      nextStep = true;
     }
 
     if (_checkRst(tlg) && State == RST1)
     {
       qsoDisplay::addString(tlg);
       State = RST2;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "ref") != NULL && State == REF)
     {
       tlg.replace("ref", "");
-
       qsoDisplay::addString("ref");
       State = MYSUMMIT;
+      nextStep = true;
     }
 
     if (tlg.length() >= _calllength && State == MYSUMMIT)
@@ -404,6 +409,7 @@ namespace qsoTrainer
         i = _mysummit.length();
 
         State = BK;
+        nextStep = true;
         if (isDigit(_mysummit[i]))
         {
           if (isDigit(_mysummit[i - 1]))
@@ -412,6 +418,7 @@ namespace qsoTrainer
             {
 
               State = BK;
+              nextStep = true;
             }
           }
         }
@@ -431,26 +438,31 @@ namespace qsoTrainer
       sendCode("ee");
       qsoDisplay::addString("ee");
       State = HISCALL1;
+      nextStep = true;
     }
   }
 
   void Morse::_qsoChaser(void) {
     tlg.trim();
+    nextStep = false;
     if (strstr(tlg.c_str(), "cq") != NULL && State == CQ) {
       tlg.replace("cq", "");
       qsoDisplay::addString("cq");
       State = SOTA;
+      nextStep = true;
     }
     if (strstr(tlg.c_str(), "sota") != NULL && State == SOTA) {
       tlg.replace("sota", "");
       qsoDisplay::addString("sota");
       State = DE;
+      nextStep = true;
     }
     if (strstr(tlg.c_str(), "de") != NULL && State == DE) {
       tlg.replace("de", "");
       qsoDisplay::addString("de");
       tlg = "";
       State = HISCALL1;
+      nextStep = true;
     }
 
     if (tlg.length() >= _calllength && State == HISCALL1) {
@@ -459,6 +471,7 @@ namespace qsoTrainer
       qsoDisplay::addString(_hisCall);
       tlg = "";
       State = SUMMIT;
+      nextStep = true;
     }
 
     if (tlg.length() >= _calllength && State == SUMMIT) {
@@ -469,11 +482,13 @@ namespace qsoTrainer
         tlg.replace(_summit, "");
         qsoDisplay::addString(_summit);
         State = K;
+        nextStep = true;
         if (isDigit(_summit[i])) {
           if (isDigit(_summit[i - 1])) {
             if (isDigit(_summit[i - 2])) {
               qsoDisplay::addString(_summit);
               State = K;
+              nextStep = true;
             }
           }
         }
@@ -484,12 +499,14 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "qrz") != NULL && State == QRZ) {
       qsoDisplay::addString("qrz");
       State = NEXTCALL;
+      nextStep = true;
     }
 
     if ((strstr(tlg.c_str(), "k") != NULL && State == K) || State == NEXTCALL) {
       if (State != NEXTCALL) {
         tlg.replace("k", "");
         qsoDisplay::addString("k");
+        nextStep = true;
       }
       _ourCall = randomCall();
       sendCode(_ourCall);
@@ -501,13 +518,15 @@ namespace qsoTrainer
       qsoDisplay::addString(tlg);
       tlg.replace(tlg, "");
       State = UR;
+      nextStep = true;
     } else {
       //sendCode(_ourCall);
     }
 
-    if (tlg == "ur" && State == UR) {
+    if (strstr(tlg.c_str(), "ur") && State == UR) {
       qsoDisplay::addString("ur");
       State = RST1;
+      nextStep = true;
     }
 
     if (tlg.length() == 3 && State == RST1) {
@@ -516,12 +535,14 @@ namespace qsoTrainer
         tlg.replace(_RST, "");
         qsoDisplay::addString(_RST);
         State = RST2;
+        nextStep = true;
       }
     }
 
     if (tlg == _RST && State == RST2) {
       qsoDisplay::addString(_RST);
       State = BK;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "bk") != NULL && State == BK) {
@@ -546,23 +567,27 @@ namespace qsoTrainer
       sendCode("bk");
       qsoDisplay::addString("bk");
       State = RR;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "rr") != NULL && State == RR) {
       tlg.replace("rr", "");
       qsoDisplay::addString("rr");
       State = BYE;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "73") != NULL && State == BYE) {
       tlg.replace("73", "");
       qsoDisplay::addString("73");
       State = END1;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "ee") != NULL && State == END1) {
       tlg.replace("ee", "");
       qsoDisplay::addString("ee");
+      nextStep = true;
 
       _ourCall = randomCall();
       sendCode(_ourCall);
