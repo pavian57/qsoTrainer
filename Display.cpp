@@ -1,7 +1,9 @@
+
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+
 #include "Display.h"
 #include "oled.h"
-#include <Arduino.h>
-
 
 
 namespace qsoDisplay {
@@ -10,12 +12,33 @@ namespace qsoDisplay {
 OLED oled = OLED(4,5,16);
 String line;
 
+int port = 8088;
+WiFiServer TelnetServer(port);
+WiFiClient Client;;
+IPAddress local_IP(192,168,4,22);
+IPAddress gateway(192,168,4,22);
+IPAddress subnet(255,255,255,0);    
+bool firstrun = false;
+
 void initDisplay()
 {
   oled.begin(); // Instead of Serial.begin(9600)
   oled.clear();
   oled.setTTYMode(true); // This set the TTY mode
   line = "";
+
+  Serial.print("Setting soft-AP configuration ... ");
+  Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+
+  Serial.print("Setting soft-AP ... ");
+  Serial.println(WiFi.softAP("ESPsoftAP_01") ? "Ready" : "Failed!");
+
+  Serial.print("Soft-AP IP address = ");
+  Serial.println(WiFi.softAPIP());
+
+  TelnetServer.begin();
+  Serial.print("Starting telnet server on port " + (String)port);
+
 } 
 
 void addString(String txt)
@@ -33,7 +56,7 @@ void addString(String txt)
        oled.print(line);
       
     }
-         
+  printTelnet("->"+txt);
 }
 
 
@@ -74,6 +97,48 @@ void resetSpeed() {
   oled.clear();
   addString(">");
   oled.display();
+}
+
+void handleTelnet(){
+
+  
+
+  if (TelnetServer.hasClient()){
+    
+       
+  
+
+  	// client is connected
+    if (!Client || !Client.connected()){
+      if(Client) Client.stop();          // client disconnected
+      Client = TelnetServer.available(); // ready for new client
+    } else {
+      TelnetServer.available().stop();  // have client, block new conections
+     
+    
+     }
+    }
+  
+
+
+  if (Client && Client.connected() && Client.available()){
+     
+    // client input processing
+    while(Client.available())
+      Serial.write(Client.read()); // pass through
+      // do other stuff with client input here
+  } 
+
+
+
+}
+
+void printTelnet(String txt) {
+  
+  if (Client.connected() == 1) {
+    Client.println(txt);
+  }
+  
 }
 
 
