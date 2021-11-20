@@ -6,6 +6,7 @@
 
 #ifndef Morse_H
 #define Morse_H
+
 #include <Arduino.h>
 
 namespace qsoTrainer
@@ -128,7 +129,7 @@ namespace qsoTrainer
 		qsoStatechase State;
 		qsoType Type;
 		String tlg;
-
+		bool nextStep;
 		void doQso(void);
 		void dot();
 		void dash();
