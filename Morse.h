@@ -121,7 +121,7 @@ namespace qsoTrainer
 	class Morse
 	{
 	public:
-		Morse(int soundPin, int keyPin);
+		Morse(int soundPin);
 		int useFansw;
 		int dotLength;
 		int farnsLength = 0;
@@ -142,7 +142,6 @@ namespace qsoTrainer
 		bool LittleFSActive = false;
 
 	private:
-		int _keyPin;
 		int _soundPin;
 		int _calllength;
 		int _repeats;
