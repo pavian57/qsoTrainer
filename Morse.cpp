@@ -12,11 +12,9 @@
 namespace qsoTrainer
 {
 
-  Morse::Morse(int soundPin, int keyPin)
+  Morse::Morse(int soundPin)
   {
-    pinMode(keyPin, OUTPUT);
     pinMode(soundPin, OUTPUT);
-    _keyPin = keyPin;
     _soundPin = soundPin;
     useFansw = 0;
     farnsLength = 0; // 5 = 240ms 6 = 200ms 7 = 141ms
@@ -32,21 +30,17 @@ namespace qsoTrainer
 
   void Morse::dot()
   {
-    digitalWrite(_keyPin, HIGH);
     tone(_soundPin, 622);
     delay(dotLength);
     noTone(_soundPin);
-    digitalWrite(_keyPin, LOW);
     delay(dotLength);
   }
 
   void Morse::dash()
   {
-    digitalWrite(_keyPin, HIGH);
     tone(_soundPin, 622);
     delay(dotLength * 3);
     noTone(_soundPin);
-    digitalWrite(_keyPin, LOW);
     delay(dotLength);
   }
 

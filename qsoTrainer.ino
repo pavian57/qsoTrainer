@@ -1,4 +1,6 @@
+
 #include <Arduino.h>
+
 #include <EEPROM.h>
 
 #include <Button2.h>
@@ -22,7 +24,7 @@ using namespace qsoTrainer;
 #define P_WPM_DOWN  2
 #define P_WPM_FARNS 0
 #define P_AUDIO  15   // Audio output
-#define P_CW A0
+
 
 //const int minWpm = 6;
 //const int maxWpm = 50;
@@ -63,7 +65,7 @@ Button2 wpm_Down = Button2(P_WPM_DOWN);
 Button2 wpm_Farns = Button2(P_WPM_FARNS);
 
 
-Morse morse(P_AUDIO,P_CW);
+Morse morse(P_AUDIO);
 
 
 // Initializing the Arduino
@@ -137,6 +139,7 @@ void loop()
   wpm_Up.loop();
   wpm_Down.loop();
   wpm_Farns.loop();
+  qsoDisplay::handleTelnet();
 
 
   
@@ -193,7 +196,12 @@ void loop()
         morse.tlg = actWord;
         morse.doQso();
         Serial.print("State: "); Serial.print(morse.State);
-        Serial.print(" Type: "); Serial.println(morse.Type);        
+        Serial.print(" Type: "); Serial.println(morse.Type);  
+        //Serial.println(morse.nextStep);
+        if (!morse.nextStep){
+          qsoDisplay::printTelnet(actWord);
+        }       
+        
         actWord = "";  
 
       }
@@ -312,3 +320,4 @@ void singleClick(Button2& btn) {
   wpm_Down.loop();
   wpm_Farns.loop();
   */
+
