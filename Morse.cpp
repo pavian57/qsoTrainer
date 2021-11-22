@@ -147,20 +147,19 @@ namespace qsoTrainer
 
   String Morse::randomCall()
   {
-    //int i = 0;
+    int i = 0;
     char idxbuffer[64]; //declare a buffer - hopefully this speeds things up...
     long fsize = 0;
     long randNumber;
-    if (!LittleFSActive && !LittleFS.exists(F("/names.idx")))
+    
+    if (!LittleFS.exists(F("/names.idx"))  &&  LittleFSActive)
     {
       randomSeed(millis());
       String callsign;
-      int i;
       callsign += MorseMap[random(0, 25)].letter;
       callsign += MorseMap[random(0, 25)].letter;
       callsign += MorseMap[random(26, 35)].letter;
-      while (i < 3)
-      {
+      while (i < 3) {
         callsign += MorseMap[random(0, 25)].letter;
         i++;
       }
@@ -209,23 +208,18 @@ namespace qsoTrainer
     long fsize = 0;
     long randNumber;
     String summit = "";
-    if (!LittleFSActive && !LittleFS.exists(F("/summitslist.idx")))
-    {
+    if (!LittleFS.exists(F("/summitslist.idx"))  &&  LittleFSActive){
       summit += MorseMap[random(0, 25)].letter;
       summit += MorseMap[random(0, 25)].letter;
       summit += "/";
       summit += MorseMap[random(0, 25)].letter;
       summit += MorseMap[random(0, 25)].letter;
-      while (i < 3)
-      {
+      while (i < 3) {
         summit += MorseMap[random(26, 35)].letter;
         i++;
       }
       return summit;
-    }
-    else
-    {
-
+    } else {
       File f1 = LittleFS.open("/summitslist.txt", "r");
       File fx = LittleFS.open("/summitslist.idx", "r");
       randomSeed(millis());
