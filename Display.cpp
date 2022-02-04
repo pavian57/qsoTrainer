@@ -43,7 +43,12 @@ void initDisplay()
 
 void addString(String txt)
 {
-    txt += " ";
+    if (txt == "") {
+      txt = line;
+      line = "";
+    } else {
+      txt += " ";
+    }
     int i = txt.length();
     int j = line.length();
     
@@ -95,7 +100,7 @@ void resetSpeed() {
   oled.setTTYMode(true);
   delay(1000);
   oled.clear();
-  addString(">");
+  addString("");
   oled.display();
 }
 
