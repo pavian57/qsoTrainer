@@ -271,8 +271,8 @@ void doubleClick(Button2& btn) {
     updateElementLength();
     if (actualWpmPrev != actualWpm || actualFarnsWpmPrev != actualFarnsWpm) {
       int i = writeToEeprom(actualWpm, actualFarnsWpm);
-    return;
     } 
+    return;
   }
 
   qsoDisplay::setSpeed();
