@@ -345,8 +345,8 @@ namespace qsoTrainer
       qsoDisplay::addString(_hisCall);
       sendCode(_hisCall);
       qsoDisplay::addString(_hisCall);
-      sendCode("ur");
-      qsoDisplay::addString("ur");
+      sendCode(_hello);
+      qsoDisplay::addString(_hello);
       _RST = randomRST();
       sendCode(_RST);
       qsoDisplay::addString(_RST);
@@ -354,17 +354,27 @@ namespace qsoTrainer
       qsoDisplay::addString(_RST);
       sendCode("bk");
       qsoDisplay::addString("bk");
-      State = TU;
+      State = RRC;
       nextStep = true;
     }
 
-    if (strstr(tlg.c_str(), "tu") != NULL && State == TU)
+    if (strstr(tlg.c_str(), "rr") != NULL && State == RRC)
     {
-      tlg.replace("tu", "");
-      qsoDisplay::addString("tu");
+      tlg.replace("rr", "");
+      qsoDisplay::addString("rr");
+      State = GD;
+      nextStep = true;
+    }
+
+    if ((strstr(tlg.c_str(), "gd") || strstr(tlg.c_str(), "gm") || strstr(tlg.c_str(), "ga") || strstr(tlg.c_str(), "ge")) && State == GD) {
+      if (strstr(tlg.c_str(), "gd")) { qsoDisplay::addString("gd"); _hello = "gd"; }
+      if (strstr(tlg.c_str(), "gm")) { qsoDisplay::addString("gm"); _hello = "gm"; }
+      if (strstr(tlg.c_str(), "ga")) { qsoDisplay::addString("ga"); _hello = "ga"; }
+      if (strstr(tlg.c_str(), "ge")) { qsoDisplay::addString("ge"); _hello = "ge"; }
       State = RST1;
       nextStep = true;
     }
+
 
     if (_checkRst(tlg) && State == RST2)
     {
@@ -396,7 +406,7 @@ namespace qsoTrainer
         _mysummit = tlg;
         i = _mysummit.length();
 
-        State = BK;
+        State = BYE;
         nextStep = true;
         if (isDigit(_mysummit[i]))
         {
@@ -405,7 +415,7 @@ namespace qsoTrainer
             if (isDigit(_summit[i - 2]))
             {
 
-              State = BK;
+              State = BYE;
               nextStep = true;
             }
           }
@@ -415,20 +425,35 @@ namespace qsoTrainer
       }
     }
 
+    if (strstr(tlg.c_str(), "73") != NULL && State == BYE) {
+      tlg.replace("73", "");
+      qsoDisplay::addString("73");
+      State = END1;
+      nextStep = true;
+    }
+
+    if (strstr(tlg.c_str(), "tu") != NULL && State == END1) {
+      tlg.replace("tu", "");
+      qsoDisplay::addString("tu");
+      nextStep = true;
+      State = BK;
+    }
+
+
     if (strstr(tlg.c_str(), "bk") != NULL && State == BK) {
       tlg.replace("bk", "");
       qsoDisplay::addString("bk");
 
-      sendCode("rr");
-      qsoDisplay::addString("rr");
       sendCode("73");
       qsoDisplay::addString("73");
-      sendCode("ee");
-      qsoDisplay::addString("ee");
+      sendCode("tu");
+      qsoDisplay::addString("tu");      
       State = HISCALL1;
       nextStep = true;
     }
   }
+
+
 
   void Morse::_qsoChaser(void) {
     tlg.trim();
@@ -505,14 +530,17 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), _ourCall.c_str()) && State == OURCALL) {
       qsoDisplay::addString(tlg);
       tlg.replace(tlg, "");
-      State = UR;
+      State = GD;
       nextStep = true;
     } else {
       //sendCode(_ourCall);
     }
 
-    if (strstr(tlg.c_str(), "ur") && State == UR) {
-      qsoDisplay::addString("ur");
+    if ((strstr(tlg.c_str(), "gd") || strstr(tlg.c_str(), "gm") || strstr(tlg.c_str(), "ga") || strstr(tlg.c_str(), "ge")) && State == GD) {
+      if (strstr(tlg.c_str(), "gd")) { qsoDisplay::addString("gd"); _hello = "gd"; }
+      if (strstr(tlg.c_str(), "gm")) { qsoDisplay::addString("gm"); _hello = "gm"; }
+      if (strstr(tlg.c_str(), "ga")) { qsoDisplay::addString("ga"); _hello = "ga"; }
+      if (strstr(tlg.c_str(), "ge")) { qsoDisplay::addString("ge"); _hello = "ge"; }
       State = RST1;
       nextStep = true;
     }
@@ -536,10 +564,10 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "bk") != NULL && State == BK) {
       tlg.replace("bk", "");
       qsoDisplay::addString("bk");
-      //sendCode("rr");
-      //qsoDisplay::addString("rr");
-      sendCode("tu");
-      qsoDisplay::addString("tu");
+      sendCode("rr");
+      qsoDisplay::addString("rr");
+      sendCode(_hello);
+      qsoDisplay::addString(_hello);
       _RST = randomRST();
       sendCode(_RST);
       qsoDisplay::addString(_RST);
@@ -552,15 +580,10 @@ namespace qsoTrainer
       qsoDisplay::addString(_summit);
       sendCode(_summit);
       qsoDisplay::addString(_summit);
-      sendCode("bk");
-      qsoDisplay::addString("bk");
-      State = RR;
-      nextStep = true;
-    }
-
-    if (strstr(tlg.c_str(), "rr") != NULL && State == RR) {
-      tlg.replace("rr", "");
-      qsoDisplay::addString("rr");
+      sendCode("73");
+      qsoDisplay::addString("73");
+      sendCode("tu");
+      qsoDisplay::addString("tu");
       State = BYE;
       nextStep = true;
     }
@@ -572,9 +595,9 @@ namespace qsoTrainer
       nextStep = true;
     }
 
-    if (strstr(tlg.c_str(), "ee") != NULL && State == END1) {
-      tlg.replace("ee", "");
-      qsoDisplay::addString("ee");
+    if (strstr(tlg.c_str(), "tu") != NULL && State == END1) {
+      tlg.replace("tu", "");
+      qsoDisplay::addString("tu");
       nextStep = true;
 
       _ourCall = randomCall();
@@ -593,14 +616,9 @@ namespace qsoTrainer
 
 Activator: CQ SOTA DE XY2ABC XY/KB023 K
 Chaser   : XY2DEF
-Activator: XY2DEF UR 559 559 BK
-Chaser   : TU 559 559 REF XY/KB045 XY/KB045 BK
-Activator: RR 73  EE
+Activator: XY2DEF GD 559 559 BK
+Chaser   : RR GD 559 559 REF XY/KB045 XY/KB045 73 TU BK
+Activator: 73 TU
 Chaser   : XY2GHJ
-
-
-
-
-
 
 */

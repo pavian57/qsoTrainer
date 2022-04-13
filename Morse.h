@@ -94,6 +94,7 @@ namespace qsoTrainer
 		RST1,
 		RST2,
 		BK,
+		RRC,
 		TU,
 		REF,
 		MYSUMMIT,
@@ -151,6 +152,7 @@ namespace qsoTrainer
 		String _summit;
 		String _mysummit;
 		String _RST;
+		String _hello = "gd";
 		struct index _idx;
 		bool _checkRst(String _rst);
 		void _qsoChaser();
