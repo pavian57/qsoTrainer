@@ -22,8 +22,8 @@ using namespace qsoTrainer;
 #define P_DASH   13   // Connects to the dash lever of the paddle
 #define P_WPM_UP  14
 #define P_WPM_DOWN  2
-#define P_WPM_FARNS 0
-#define P_AUDIO  15   // Audio output
+#define P_WPM_FARNS 15
+#define P_AUDIO  0   // Audio output
 
 
 //const int minWpm = 6;
