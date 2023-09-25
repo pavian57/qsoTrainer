@@ -3,7 +3,9 @@
 
 #include <EEPROM.h>
 
+// https://github.com/LennartHennigs/
 #include <Button2.h>
+#include <ESPRotary.h>
 
 #define USE_LittleFS
 
@@ -18,23 +20,26 @@ using namespace qsoTrainer;
 
 #define Version 1.0b
 
-#define P_DOT    12   // Connects to the dot lever of the paddle
+#define P_DOT    00   // Connects to the dot lever of the paddle
 #define P_DASH   13   // Connects to the dash lever of the paddle
-#define P_WPM_UP  14
-#define P_WPM_DOWN  2
-#define P_WPM_FARNS 15
-#define P_AUDIO  0   // Audio output
 
+#define P_UP  12  //sda
+#define P_DOWN  14  //scl
+#define P_BUTTON 02  //d3
+
+#define P_AUDIO    15 // Audio output
+
+#define CLICKS_PER_STEP   4   // this number depends on your rotary encoder 
 
 //const int minWpm = 6;
 //const int maxWpm = 50;
 
 
 int actualWpm; // = 20;  5 - 50
-int actualFarnsWpm; // = 10; 5-10
+int actualFarnsWpm; // = 10; 0-10
 
 int actualWpmPrev; // = 20;  5 - 50
-int actualFarnsWpmPrev; // = 10; 5-10
+int actualFarnsWpmPrev; // = 10; 0-10
 
 int ditState = 0;        
 int dahState = 0;
@@ -58,11 +63,8 @@ String txtSign;
 int mode = 1;
 int farnsworth = 2;
 
-
-
-Button2 wpm_Up = Button2(P_WPM_UP);
-Button2 wpm_Down = Button2(P_WPM_DOWN);
-Button2 wpm_Farns = Button2(P_WPM_FARNS);
+Button2 button; 
+ESPRotary rotary;
 
 
 Morse morse(P_AUDIO);
@@ -78,11 +80,12 @@ void setup() {
   pinMode(P_DASH, INPUT_PULLUP); 
 
 
-  wpm_Up.setClickHandler(singleClick);
-  wpm_Down.setClickHandler(singleClick);
-  wpm_Farns.setClickHandler(singleClick);
-  wpm_Farns.setDoubleClickHandler(doubleClick);
-  
+  rotary.begin(P_DOWN, P_UP, CLICKS_PER_STEP);
+  rotary.setChangedHandler(rotate);
+
+  button.begin(P_BUTTON);
+  button.setClickHandler(singleClick);
+  button.setDoubleClickHandler(doubleClick);
 
   actSign = "";
   actWord = "";
@@ -135,10 +138,11 @@ void setup() {
 // Main routine
 void loop()
 {
+
+  rotary.loop();
+  button.loop();
   
-  wpm_Up.loop();
-  wpm_Down.loop();
-  wpm_Farns.loop();
+
   qsoDisplay::handleTelnet();
 
 
@@ -216,6 +220,12 @@ void updateWpm()
   Serial.println(actualWpm);
   Serial.print("Setting Farnsworth to ");
   Serial.println(actualFarnsWpm);
+
+  rotary.setUpperBound(51);
+  rotary.setLowerBound(4);
+  rotary.resetPosition(actualWpm,false);
+
+
      // Calculate millisecond bit length from new WPM
   updateElementLength();
   
@@ -247,8 +257,7 @@ void updateElementLength()
 
 int writeToEeprom(int wpm,int fwpm){
   Serial.println("Save!");
-  //actualWpm = 20;
-  //actualFarnsWpm = 10;
+  
   EEPROM.begin(512);
   int addr=0;
   addr += EEPROM.put(addr, actualWpm);
@@ -266,48 +275,64 @@ int readFromEeprom(int wpm,int fwpm){
 void doubleClick(Button2& btn) {
   Serial.print("doubleclick:  ");
   if (mode == 2) { 
-    mode = 1;
-    qsoDisplay::resetSpeed();  
+    return;
+  }
+  if (mode == 3) {     
+    qsoDisplay::resetSpeed();      
     updateElementLength();
+
     if (actualWpmPrev != actualWpm || actualFarnsWpmPrev != actualFarnsWpm) {
       int i = writeToEeprom(actualWpm, actualFarnsWpm);
     } 
+    mode = 1;
     return;
   }
-
-  qsoDisplay::setSpeed();
-  qsoDisplay::printWpm(actualWpm);
-  qsoDisplay::printFarnsWpm(actualFarnsWpm);
-  actualWpmPrev = actualWpm; // = 20;  5 - 50
-  actualFarnsWpmPrev = actualFarnsWpm; // = 10; 5-10
-  mode = 2;
-  
-}
+    mode = 3;
+    qsoDisplay::setSpeed();
+    rotary.setUpperBound(11);
+    rotary.setLowerBound(-1);
+    rotary.resetPosition(actualFarnsWpm,false);
+    qsoDisplay::printWpm(actualWpm);
+    qsoDisplay::printFarnsWpm(actualFarnsWpm);
+  }
 
 void singleClick(Button2& btn) {
   Serial.println("click:  ");
+  if (mode == 3) { 
+    return;
+  }
   if (mode == 2) { 
-    if (btn == wpm_Up) {
-      ++actualWpm;
-      qsoDisplay::printWpm(actualWpm);
-      Serial.print("up ");
-    }
-    if (btn == wpm_Down) {
-      --actualWpm;
-      qsoDisplay::printWpm(actualWpm);      
-      Serial.print("down ");
+    
+    qsoDisplay::resetSpeed();  
+    updateElementLength();
+    if (actualWpmPrev != actualWpm) {
+      int i = writeToEeprom(actualWpm, actualFarnsWpm);
     } 
-
-    if (btn == wpm_Farns) {
-      actualFarnsWpm = (actualFarnsWpm <=9) ? actualFarnsWpm+=1 :  0;   
-      if  (actualFarnsWpm < 5 and actualFarnsWpm != 0) {
-        actualFarnsWpm = 5;
-      }
-      qsoDisplay::printFarnsWpm(actualFarnsWpm);    
-      Serial.print("farns "); 
-    }
-  } 
+    mode = 1;       
+    return;
+  }
+  mode = 2;
+  qsoDisplay::setSpeed();
+  rotary.setUpperBound(51);
+  rotary.setLowerBound(4);
+  rotary.resetPosition(actualWpm,false); 
+  qsoDisplay::printWpm(actualWpm);
+  qsoDisplay::printFarnsWpm(actualFarnsWpm);
 }
+
+void rotate(ESPRotary& r) {
+   if (mode == 2) {    
+    actualWpm = r.getPosition();
+    Serial.println(actualWpm);
+    qsoDisplay::printWpm(actualWpm);  
+  } else if (mode == 3) {
+    actualFarnsWpm = r.getPosition();
+    Serial.println(actualFarnsWpm);
+    qsoDisplay::printFarnsWpm(actualFarnsWpm);  
+  }
+}
+
+
 
 //    actualFarnsWpm = (actualFarnsWpm <=6) ? actualFarnsWpm+=1 :  0;
 //    Serial.println(actualFarnsWpm);
@@ -320,4 +345,3 @@ void singleClick(Button2& btn) {
   wpm_Down.loop();
   wpm_Farns.loop();
   */
-
