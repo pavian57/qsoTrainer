@@ -20,8 +20,8 @@ using namespace qsoTrainer;
 
 #define Version 1.0b
 
-#define P_DOT    00   // Connects to the dot lever of the paddle
-#define P_DASH   13   // Connects to the dash lever of the paddle
+#define P_DOT    13   // Connects to the dot lever of the paddle
+#define P_DASH   00   // Connects to the dash lever of the paddle
 
 #define P_UP  12  //sda
 #define P_DOWN  14  //scl
