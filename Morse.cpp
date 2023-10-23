@@ -79,6 +79,10 @@ namespace qsoTrainer
     {
       return "<as>";
     }
+    if (code == "-...-")
+    {
+      return "<bt>";
+    }
     code.concat(" ");
     int lastPos = 0;
     int pos = code.indexOf(' ');
