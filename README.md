@@ -10,8 +10,8 @@ Entering `**sksk**` goes back to the first step.
 
 You			: cq sota de xy2abc xy/jo023 k  
 qsoTrainer	: xy3cba  
-You			: xy3cba ur 559 559 bk  
-qsoTrainer	: tu 559 559 ref xy/ja134 bk  
+You			: xy3cba gd 559 559 bk  
+qsoTrainer	: rr gd 559 559 ref xy/ja134 bk  
 You			: rr 73 ee  
 qsoTrainer	: xy2ghj
 
@@ -20,13 +20,17 @@ qsoTrainer	: xy2ghj
 
 qsoTrainer	: qrl? cq sota de xy3cba xy/ja134 k  
 You			: xy2abc  
-qsoTrainer	: xy2abc ur 589 589 bk  
-You			: tu 5nn 5nn ref xy/ja134 bk  
-qsoTrainer	: rr 73 ee  
+qsoTrainer	: xy2abc gd 589 589 bk  
+You			: rr gd 5nn 5nn ref xy/ja134 73 tu bk  
+qsoTrainer	: 73 tu ee  
 You			: xy2ghj
 
 
 3. If you give a `**asas**`, the qsoTrainer will echo everything you give with the paddle.  
+
+give `**asas**` again to leave the trainer mode, the reset button doesn the same.
+
+4. If you give a `**btbt**`, the qsoTrainer will echo Callsign you give back with the paddle.  
 
 give `**asas**` again to leave the trainer mode, the reset button doesn the same.
 
