@@ -302,6 +302,12 @@ namespace qsoTrainer
     {
       qsoDisplay::addString("qrl?");
       tlg.replace("qrl?", "");
+      if (Type == CHASER) {
+        Type = NONE;
+        State = NADA;  
+        qsoDisplay::addString("rr");
+        return;
+      }
       Type = CHASER;
       State = CQ;      
     }
@@ -309,12 +315,24 @@ namespace qsoTrainer
     {
       qsoDisplay::addString("<ka>");
       tlg.replace("<ka><ka>", "");
+      if (Type == ACTIVATE) {
+        Type = NONE;
+        State = NADA;  
+        qsoDisplay::addString("rr");
+        return;
+      }
       Type = ACTIVATE;
       State = STARTQSO;
     }
     if (strstr(tlg.c_str(), "<as><as>") != NULL)
     {
       qsoDisplay::addString("<as>");
+      if (Type == TRAINING) {
+        Type = NONE;
+        State = NADA;  
+        qsoDisplay::addString("rr");
+        return;
+      }
       Type = TRAINING;
       State = NADA;
       nextStep = true;
@@ -322,6 +340,12 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "<bt><bt>") != NULL)
     {
       qsoDisplay::addString("<bt>");
+      if (Type == CALLSIGN) {
+        Type = NONE;
+        State = NADA;  
+        qsoDisplay::addString("rr");
+        return;
+      }
       Type = CALLSIGN;
       State = CSECHO;
       nextStep = true;
@@ -479,6 +503,8 @@ namespace qsoTrainer
       qsoDisplay::addString("73");
       sendCode("tu");
       qsoDisplay::addString("tu");      
+      sendCode("ee");
+      qsoDisplay::addString("ee");      
       State = HISCALL1;
       nextStep = true;
     }
@@ -563,9 +589,10 @@ namespace qsoTrainer
       tlg.replace(tlg, "");
       State = GD;
       nextStep = true;
-    } else {
+    } 
+    //else {
       //sendCode(_ourCall);
-    }
+    //}
 
     if ((strstr(tlg.c_str(), "gd") || strstr(tlg.c_str(), "gm") || strstr(tlg.c_str(), "ga") || strstr(tlg.c_str(), "ge")) && State == GD) {
       if (strstr(tlg.c_str(), "gd")) { qsoDisplay::addString("gd"); _hello = "gd"; }
@@ -615,6 +642,8 @@ namespace qsoTrainer
       qsoDisplay::addString("73");
       sendCode("tu");
       qsoDisplay::addString("tu");
+      sendCode("bk");
+      qsoDisplay::addString("bk");
       State = BYE;
       nextStep = true;
     }
@@ -629,8 +658,14 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "tu") != NULL && State == END1) {
       tlg.replace("tu", "");
       qsoDisplay::addString("tu");
+      State = E1;
       nextStep = true;
+    }
 
+    if (strstr(tlg.c_str(), "ee") != NULL && State == BYE) {
+      tlg.replace("ee", "");
+      qsoDisplay::addString("ee");
+      nextStep = true;
       _ourCall = randomCall();
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
