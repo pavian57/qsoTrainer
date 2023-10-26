@@ -75,7 +75,8 @@ namespace qsoTrainer
 		NONE,
 		TRAINING,
 		CHASER,
-		ACTIVATE
+		ACTIVATE,
+		CALLSIGN
 	};
 
 	enum qsoStatechase
@@ -110,7 +111,10 @@ namespace qsoTrainer
 		STARTQSO,
 		QRZ,
 		NEXTCALL,
-		EE
+		EE,
+		CSECHO,
+		CSWAIT,
+		CSKEYOK
 	};
 
 	struct index
@@ -158,6 +162,7 @@ namespace qsoTrainer
 		void _qsoChaser();
 		void _qsoActivate();
 		void _qsoTraining();
+		void _qsoCallSign();
 	};
 
 }

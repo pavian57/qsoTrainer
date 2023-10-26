@@ -83,6 +83,23 @@ namespace qsoTrainer
     {
       return "<bt>";
     }
+    if (code == "...-.")
+    {
+      return "<ve>";
+    }
+
+
+    /*
+      Pro signs 
+               <as> .-...
+               <ka> -.-.-
+               <kn> -.--.
+               <sk> ...-.-
+               <ve> ...-.
+               <bt> -...-
+    */
+      
+               
     code.concat(" ");
     int lastPos = 0;
     int pos = code.indexOf(' ');
@@ -302,6 +319,13 @@ namespace qsoTrainer
       State = NADA;
       nextStep = true;
     }
+    if (strstr(tlg.c_str(), "<bt><bt>") != NULL)
+    {
+      qsoDisplay::addString("<bt>");
+      Type = CALLSIGN;
+      State = CSECHO;
+      nextStep = true;
+    }
     switch (Type)
     {
     case ACTIVATE:
@@ -312,6 +336,9 @@ namespace qsoTrainer
       break;
     case (TRAINING):
       _qsoTraining();
+      break;
+    case (CALLSIGN):
+      _qsoCallSign();
       break;
     default:
       break;
@@ -615,7 +642,30 @@ namespace qsoTrainer
     qsoDisplay::addString(tlg);
   }
 
+  void Morse::_qsoCallSign(void) {
+  
+    
+    if (State == CSECHO) {
+      Serial.println("Callsign Training");
+      _ourCall = Morse::randomCall();
+      sendCode(_ourCall);
+      qsoDisplay::addString(_ourCall);
+      State = CSWAIT;
+    }
+    tlg.trim();
+    if (strstr(tlg.c_str(), _ourCall.c_str()) && State == CSWAIT) {
+      qsoDisplay::addString(tlg);
+      tlg.replace(tlg, "");
+      _ourCall = Morse::randomCall();
+      sendCode(_ourCall);
+      qsoDisplay::addString(_ourCall);
+    }
+  }
+
+
 }
+
+
 /*
 
 Activator: CQ SOTA DE XY2ABC XY/KB023 K
