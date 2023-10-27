@@ -306,6 +306,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        nextStep = false;
         return;
       }
       Type = CHASER;
@@ -319,6 +320,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        nextStep = false;
         return;
       }
       Type = ACTIVATE;
@@ -331,6 +333,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        nextStep = false;
         return;
       }
       Type = TRAINING;
@@ -344,6 +347,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        nextStep = false;
         return;
       }
       Type = CALLSIGN;
