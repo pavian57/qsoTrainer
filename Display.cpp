@@ -31,7 +31,7 @@ void initDisplay()
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
   Serial.print("Setting soft-AP ... ");
-  Serial.println(WiFi.softAP("ESPsoftAP_01") ? "Ready" : "Failed!");
+  Serial.println(WiFi.softAP("qsoTrainer") ? "Ready" : "Failed!");
 
   Serial.print("Soft-AP IP address = ");
   Serial.println(WiFi.softAPIP());
