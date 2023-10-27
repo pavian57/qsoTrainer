@@ -12,7 +12,7 @@ You			: cq sota de xy2abc xy/jo023 k
 qsoTrainer	: xy3cba  
 You			: xy3cba gd 559 559 bk  
 qsoTrainer	: rr gd 559 559 ref xy/ja134 bk  
-You			: rr 73 ee  
+You			: 73 tu ee  
 qsoTrainer	: xy2ghj
 
 
