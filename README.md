@@ -39,11 +39,12 @@ give `**asas**` again to leave the trainer mode, the reset button doesn the same
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
 
 I took names.csv from https://hb9sota.ch/names_hb9bin/names.csv, cleaned up a little bit and created a Index on linenumbers for easy access. I did the same to summitslist.csv, that can be downloaded here https://www.sotadata.org.uk/summitslist.csv.
+
 There is not much space for a complete summitlist, i have stripped down to to summit only. As this was'nt enough, i purged all not european countries. 
-If there are no files, random call and summit will be made by the code.
 
 I made files for all continents.
-
+Summitlist for other Continents ar in the Folder Summits, just copy to data Folder.
+If there are no files, random call and summit will be made by the code.
 
 **Software**
 - Arduino and VS Code  
@@ -54,7 +55,7 @@ I made files for all continents.
 
 - ESP8266 Microcontroller , i used Wifikit 8 from Heltec.  
 - Oled Display 128x32 I2C  
-- 3 Pushbutton  
+- simple Rotaryencoder
 - 3.5mm Jack 3pol female for keyer
 - 3.5mm Jack 3pol female for headset
 
