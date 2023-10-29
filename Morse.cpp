@@ -23,6 +23,7 @@ namespace qsoTrainer
     Type = NONE;
     _calllength = 6;
     _repeats = 1;
+    sotaqso = false;
     if (LittleFS.begin()) {
       LittleFSActive = true;
     }
@@ -312,6 +313,23 @@ namespace qsoTrainer
       Type = CHASER;
       State = CQ;      
     }
+    
+    if (strstr(tlg.c_str(), "<ve><ve>") != NULL && Type != TRAINING) 
+    {
+      qsoDisplay::addString("sota");
+      tlg.replace("sota", "");
+      sotaqso = true;
+      Serial.println("sota");
+      if (Type == CHASER) {
+        Type = NONE;
+        State = NADA;  
+        sotaqso = false;
+        qsoDisplay::addString("rr");
+        nextStep = false;
+        return;
+      }    
+    }
+
     if (strstr(tlg.c_str(), "<ka><ka>") != NULL && Type != TRAINING)
     {
       qsoDisplay::addString("<ka>");
@@ -383,16 +401,24 @@ namespace qsoTrainer
       qsoDisplay::addString("qrl?");
       sendCode("cq");
       qsoDisplay::addString("cq");
-      sendCode("sota");
-      qsoDisplay::addString("sota");
-      sendCode("de");
-      qsoDisplay::addString("de");
-      _ourCall = Morse::randomCall();
-      sendCode(_ourCall);
-      qsoDisplay::addString(_ourCall);
-      _summit = Morse::randomSummit();
-      sendCode(_summit);
-      qsoDisplay::addString(_summit);
+      if (sotaqso) {
+        sendCode("sota");
+        qsoDisplay::addString("sota");
+        sendCode("de");
+        qsoDisplay::addString("de");
+        _ourCall = Morse::randomCall();
+        sendCode(_ourCall);
+        qsoDisplay::addString(_ourCall);
+        _summit = Morse::randomSummit();
+        sendCode(_summit);
+        qsoDisplay::addString(_summit);
+      } else {
+        sendCode("de");
+        qsoDisplay::addString("de");
+        _ourCall = Morse::randomCall();
+        sendCode(_ourCall);
+        qsoDisplay::addString(_ourCall);
+      }
       sendCode("k");
       qsoDisplay::addString("k");
       State = HISCALL1;
@@ -438,7 +464,11 @@ namespace qsoTrainer
     if (_checkRst(tlg) && State == RST2)
     {
       qsoDisplay::addString(tlg);
-      State = REF;
+      if (sotaqso) {
+        State = REF;
+      } else {
+        State = BYE;
+      }
       nextStep = true;
     }
 
@@ -522,7 +552,11 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "cq") != NULL && State == CQ) {
       tlg.replace("cq", "");
       qsoDisplay::addString("cq");
-      State = SOTA;
+      if (sotaqso) {
+        State = SOTA;
+      } else {
+        State = DE;
+      }  
       nextStep = true;
     }
     if (strstr(tlg.c_str(), "sota") != NULL && State == SOTA) {
@@ -544,7 +578,11 @@ namespace qsoTrainer
       tlg.replace(_hisCall, "");
       qsoDisplay::addString(_hisCall);
       tlg = "";
-      State = SUMMIT;
+      if (sotaqso) {
+        State = SUMMIT;
+      } else {
+        State = K;
+      }  
       nextStep = true;
     }
 
@@ -635,13 +673,15 @@ namespace qsoTrainer
       qsoDisplay::addString(_RST);
       sendCode(_RST);
       qsoDisplay::addString(_RST);
-      sendCode("ref");
-      qsoDisplay::addString("ref");
-      _summit = Morse::randomSummit();
-      sendCode(_summit);
-      qsoDisplay::addString(_summit);
-      sendCode(_summit);
-      qsoDisplay::addString(_summit);
+      if (sotaqso) {
+        sendCode("ref");
+        qsoDisplay::addString("ref");
+        _summit = Morse::randomSummit();
+        sendCode(_summit);
+        qsoDisplay::addString(_summit);
+        sendCode(_summit);
+        qsoDisplay::addString(_summit);
+      }      
       sendCode("73");
       qsoDisplay::addString("73");
       sendCode("tu");

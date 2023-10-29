@@ -135,6 +135,7 @@ namespace qsoTrainer
 		qsoType Type;
 		String tlg;
 		bool nextStep;
+		bool sotaqso;
 		void doQso(void);
 		void dot();
 		void dash();
