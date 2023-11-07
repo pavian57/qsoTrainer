@@ -23,8 +23,8 @@ using namespace qsoTrainer;
 #define P_DOT    13   // Connects to the dot lever of the paddle
 #define P_DASH   00   // Connects to the dash lever of the paddle
 
-#define P_UP  12  //sda
-#define P_DOWN  14  //scl
+#define P_UP  14  //sda
+#define P_DOWN  12  //scl
 #define P_BUTTON 02  //d3
 
 #define P_AUDIO    15 // Audio output
