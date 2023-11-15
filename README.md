@@ -28,12 +28,14 @@ You			: xy2ghj
 
 3. If you give a `**asas**`, the qsoTrainer will echo everything you give with the paddle.  
 
-give `**asas**` again to leave the trainer mode, the reset button doesn the same.
+give `**asas**` again to leave the trainer mode, the reset button does the same.
 
 4. If you give a `**btbt**`, the qsoTrainer will echo Callsign you give back with the paddle.  
 
-give `**asas**` again to leave the trainer mode, the reset button doesn the same.
+give `**btbt**` again to leave the Callsign mode, the reset button does the same.
 
+
+5. to change WPM and set SOTA Qso, doubclick the eoncoder, to enter Menu, to change value click once.
 
 ## Requirements
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
