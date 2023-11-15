@@ -702,7 +702,7 @@ namespace qsoTrainer
     if (strstr(tlg.c_str(), "tu") != NULL && State == END1) {
       tlg.replace("tu", "");
       qsoDisplay::addString("tu");
-      State = E1;
+      State = BYE;
       nextStep = true;
     }
 
