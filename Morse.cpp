@@ -632,6 +632,14 @@ namespace qsoTrainer
       State = GD;
       nextStep = true;
     } 
+     if (State == OURCALL) {
+      _repeats++;
+      if (_repeats >= 5) {
+        sendCode(_ourCall);
+        _repeats = 0;
+      }
+      Serial.println(_repeats);
+    }
     //else {
       //sendCode(_ourCall);
     //}
