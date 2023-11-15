@@ -6,16 +6,21 @@
 
 namespace qsoDisplay {
 
-void initDisplay();
-void addString(String txt);
-void setFont(boolean bold); //true set bold
+    void initDisplay();
+    void addString(String txt);    
 
-void setSpeed();
-void printWpm(int value);
-void printFarnsWpm(int value);
-void resetSpeed();
-void handleTelnet();
-void printTelnet(String txt);
+    void prepareMenu();
+    void printMenu(int val1, int val2, int val3);
+    void updateMenu(int menupos,int lastmenupos);
+    void updateValues(int position, int val);
+    void setMenuPointertoValues(int pos);
+    void restsetMenuPointertoValues(int pos);    
+    void clearMenu();
+    
+    void handleTelnet();
+    void printTelnet(String txt);
+
+    
 
 
 } //namespace

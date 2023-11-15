@@ -65,44 +65,105 @@ void addString(String txt)
 }
 
 
-void setFont(bool bold)
-{
-  if (bold) {}
-}
-
-
-void setSpeed() {
-  oled.setTTYMode(false);
+void prepareMenu(){
   oled.clear();
-  oled.draw_string(30,0,"Settings");
-  oled.draw_string(10,10,"WPM: ");
-  oled.draw_string(10,20,"FarnsWPM: ");
-  oled.display();
-}
-void printWpm(int value){
-  oled.draw_string(70,10,"~~",OLED::NORMAL_SIZE , OLED::BLACK); 
-  //draw_character(uint_fast8_t x, uint_fast8_t y, char c, tSize scaling=NORMAL_SIZE, tColor color=WHITE);
-  oled.display();
-  oled.printf(70,10,"%02d",value);
   oled.display();
 }
 
-void printFarnsWpm(int value){
-  oled.draw_string(70,20,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
-  //draw_character(uint_fast8_t x, uint_fast8_t y, char c, tSize scaling=NORMAL_SIZE, tColor color=WHITE);
-  oled.display();
-  oled.printf(70,20,"%02d",value);
+
+
+void printMenu(int val1,int val2, int val3){
+  String menu1 = "WPM";
+  String menu2 = "Farnsworth";
+  String menu3 = "SOTA Qso";
+
+  oled.printf(10,1,"%s",menu1.c_str());      
+  oled.printf(90,1,"%02d",val1);        
+  oled.printf(10,10,"%s",menu2.c_str());      
+  oled.printf(90,10,"%02d",val2);        
+  oled.printf(10,19,"%s",menu3.c_str());      
+  oled.printf(96,19,"%d",val3);        
+  oled.printf(0,1,">"); 
   oled.display();
 }
 
-void resetSpeed() {
-  oled.setCursor(0,0);
-  oled.setTTYMode(true);
-  delay(1000);
+void updateMenu(int menupos,int lastmenupos){
+  
+  if (lastmenupos == 1) { 
+    oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  } else if (lastmenupos == 2) { 
+    oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  } else if (lastmenupos == 3) { 
+    oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  }
+
+  if (menupos == 1) { 
+    oled.printf(0,1,">");
+  } else if (menupos == 2) { 
+    oled.printf(0,10,">");
+  } else if (menupos == 3) { 
+    oled.printf(0,19,">");
+  }
+  oled.display();
+}
+
+void clearMenu(){
   oled.clear();
-  addString("");
+  oled.display();
+  oled.print(line);
+}
+
+void updateValues(int position, int val){
+  if (position =! 19) {
+    oled.draw_string(90,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    oled.printf(90,position,"%02d",val);  
+  } else {
+    oled.draw_string(93,19,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    oled.printf(96,19,"%d",val);  
+  }
   oled.display();
 }
+
+void setMenuPointertoValues(int pos){
+  switch(pos){
+         case 1: 
+            oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+            oled.draw_string(75,1,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+          case 2:
+            oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK);
+            oled.draw_string(75,10,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+          case 3:
+            oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+            oled.draw_string(75,19,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+        default: break;                     
+     }
+     oled.display();
+}
+
+void restsetMenuPointertoValues(int pos){
+  switch(pos){
+      case 1:
+        oled.draw_string(75,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,1,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      case 2:
+        oled.draw_string(75,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,10,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      case 3:
+        oled.draw_string(75,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,19,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      default: break;  
+  }
+  oled.display();
+}
+
+
+
 
 void handleTelnet(){
 

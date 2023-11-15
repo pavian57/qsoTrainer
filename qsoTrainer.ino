@@ -23,8 +23,8 @@ using namespace qsoTrainer;
 #define P_DOT    13   // Connects to the dot lever of the paddle
 #define P_DASH   00   // Connects to the dash lever of the paddle
 
-#define P_UP  14  //sda
-#define P_DOWN  12  //scl
+#define P_UP  12  //sda
+#define P_DOWN  14  //scl
 #define P_BUTTON 02  //d3
 
 #define P_AUDIO    15 // Audio output
@@ -57,6 +57,13 @@ unsigned long currentMillis;
 String actSign;
 String actWord;
 String txtSign;
+
+int menuitem = 1;
+int lastMenuItem = 1;
+
+bool inMenu = false;
+bool chvalue = false;
+
 
 
 
@@ -267,81 +274,89 @@ int writeToEeprom(int wpm,int fwpm){
   return 1;
 }
 
-int readFromEeprom(int wpm,int fwpm){
-  return 1;
-}
+
 
 
 void doubleClick(Button2& btn) {
   Serial.print("doubleclick:  ");
   if (mode == 2) { 
-    return;
-  }
-  if (mode == 3) {     
-    qsoDisplay::resetSpeed();      
-    updateElementLength();
-
+    qsoDisplay::clearMenu();    
+    updateWpm();
+    
     if (actualWpmPrev != actualWpm || actualFarnsWpmPrev != actualFarnsWpm) {
       int i = writeToEeprom(actualWpm, actualFarnsWpm);
     } 
     mode = 1;
-    return;
+    inMenu = false;
+  } else {
+    mode = 2;
+    inMenu = true;
+    menuitem = 1;
+    lastMenuItem = 1;  
+    qsoDisplay::prepareMenu();
+    qsoDisplay::printMenu(actualWpm, actualFarnsWpm, morse.sotaqso);    
+    rotary.setUpperBound(4);
+    rotary.setLowerBound(0);
+    rotary.resetPosition(1,false);
   }
-    mode = 3;
-    qsoDisplay::setSpeed();
-    rotary.setUpperBound(11);
-    rotary.setLowerBound(-1);
-    rotary.resetPosition(actualFarnsWpm,false);
-    qsoDisplay::printWpm(actualWpm);
-    qsoDisplay::printFarnsWpm(actualFarnsWpm);
-  }
+ 
+}
 
 void singleClick(Button2& btn) {
-  Serial.println("click:  ");
-  if (mode == 3) { 
-    return;
+
+  if (inMenu) {    
+    if (chvalue) {            
+      rotary.setUpperBound(4);
+      rotary.setLowerBound(0);
+      rotary.resetPosition(menuitem,false);
+      qsoDisplay::restsetMenuPointertoValues(menuitem);
+      chvalue = false;
+    } else {
+      chvalue = true;      
+      switch(menuitem){
+         case 1: 
+            rotary.setUpperBound(51);
+            rotary.setLowerBound(4);
+            rotary.resetPosition(actualWpm,false);
+            qsoDisplay::setMenuPointertoValues(1);
+          break;
+          case 2:
+            rotary.setUpperBound(11);
+            rotary.setLowerBound(-1);
+            rotary.resetPosition(actualFarnsWpm,false);                        
+            qsoDisplay::setMenuPointertoValues(2);
+          break;
+          case 3:
+            qsoDisplay::setMenuPointertoValues(3);            
+            break;
+        default: break;                     
+     }
+    }   
   }
-  if (mode == 2) { 
-    
-    qsoDisplay::resetSpeed();  
-    updateElementLength();
-    if (actualWpmPrev != actualWpm) {
-      int i = writeToEeprom(actualWpm, actualFarnsWpm);
-    } 
-    mode = 1;       
-    return;
-  }
-  mode = 2;
-  qsoDisplay::setSpeed();
-  rotary.setUpperBound(51);
-  rotary.setLowerBound(4);
-  rotary.resetPosition(actualWpm,false); 
-  qsoDisplay::printWpm(actualWpm);
-  qsoDisplay::printFarnsWpm(actualFarnsWpm);
+  Serial.println("click:  "); 
 }
 
 void rotate(ESPRotary& r) {
-   if (mode == 2) {    
-    actualWpm = r.getPosition();
-    Serial.println(actualWpm);
-    qsoDisplay::printWpm(actualWpm);  
-  } else if (mode == 3) {
-    actualFarnsWpm = r.getPosition();
-    Serial.println(actualFarnsWpm);
-    qsoDisplay::printFarnsWpm(actualFarnsWpm);  
-  }
+
+  if (inMenu && !chvalue) {
+    lastMenuItem = menuitem;
+    menuitem = rotary.getPosition();      
+    qsoDisplay::updateMenu(menuitem,lastMenuItem);    
+  } 
+
+  if (inMenu && chvalue ) {    
+    if (menuitem == 1) {           
+          actualWpm = rotary.getPosition();
+          qsoDisplay::updateValues(1,actualWpm);         
+      } else if (menuitem == 2){ 
+          actualFarnsWpm = rotary.getPosition();
+          qsoDisplay::updateValues(10,actualFarnsWpm); 
+      } else if (menuitem == 3) { 
+          morse.sotaqso =  (morse.sotaqso == 0) ? 1 : 0;
+          qsoDisplay::updateValues(19,morse.sotaqso); 
+      }
+  } 
 }
 
 
 
-//    actualFarnsWpm = (actualFarnsWpm <=6) ? actualFarnsWpm+=1 :  0;
-//    Serial.println(actualFarnsWpm);
-//    qsoDisplay::printFarnsWpm(actualFarnsWpm);
-  
-
-
-/*
-  wpm_Up.loop();
-  wpm_Down.loop();
-  wpm_Farns.loop();
-  */
