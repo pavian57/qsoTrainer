@@ -61,6 +61,7 @@ String cwAbbr;
 
 int menuitem = 1;
 int lastMenuItem = 1;
+int sotaqso;
 
 bool inMenu = false;
 bool chvalue = false;
@@ -114,6 +115,7 @@ void setup() {
   int addr=0;
   addr += EEPROM.get(addr, actualWpm);
   addr += EEPROM.get(addr, actualFarnsWpm);
+  addr += EEPROM.get(addr, sotaqso);
   EEPROM.commit();
   EEPROM.end();
   /*Serial.print("Setting WPM to ");
@@ -135,14 +137,16 @@ void setup() {
     addr=0;
     addr += EEPROM.put(addr, actualWpm);
     addr += EEPROM.put(addr, actualFarnsWpm);
-    
+    addr += EEPROM.put(addr, sotaqso);
     EEPROM.end();    
     
   };
-  
-  //cwAbbr = Morse::randomcwAbbr;
 
-  updateWpm();
+
+
+
+
+    updateWpm();
   
   Serial.println("done");
 }
@@ -359,6 +363,7 @@ void rotate(ESPRotary& r) {
       } else if (menuitem == 3) { 
           morse.sotaqso =  (morse.sotaqso == 0) ? 1 : 0;
           qsoDisplay::updateValues(19,morse.sotaqso); 
+          sotaqso = morse.sotaqso;
       }
   } 
 }
