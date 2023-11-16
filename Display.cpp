@@ -114,12 +114,14 @@ void clearMenu(){
 }
 
 void updateValues(int position, int val){
-  if (position =! 19) {
-    oled.draw_string(90,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
-    oled.printf(90,position,"%02d",val);  
-  } else {
+  Serial.printf("Position: %d",position);
+  if (position == 19) {
     oled.draw_string(93,19,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
     oled.printf(96,19,"%d",val);  
+  } else {
+    oled.draw_string(90,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    oled.printf(90,position,"%02d",val);  
+    
   }
   oled.display();
 }
