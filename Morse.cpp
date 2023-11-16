@@ -671,17 +671,15 @@ namespace qsoTrainer
       State = GD;
       nextStep = true;
     } 
-     if (State == OURCALL) {
-      _repeats++;
+     if (State == OURCALL) {      
       if (_repeats >= 5) {
         sendCode(_ourCall);
-        _repeats = 0;
+        _repeats = 1;
       }
       Serial.println(_repeats);
+      _repeats++;
     }
-    //else {
-      //sendCode(_ourCall);
-    //}
+    
 
     if ((strstr(tlg.c_str(), "gd") || strstr(tlg.c_str(), "gm") || strstr(tlg.c_str(), "ga") || strstr(tlg.c_str(), "ge")) && State == GD) {
       if (strstr(tlg.c_str(), "gd")) { qsoDisplay::addString("gd"); _hello = "gd"; }
@@ -775,6 +773,7 @@ namespace qsoTrainer
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
       State = CSWAIT;
+           
     }
     tlg.trim();
     if (strstr(tlg.c_str(), _ourCall.c_str()) && State == CSWAIT) {
@@ -783,8 +782,16 @@ namespace qsoTrainer
       _ourCall = Morse::randomCall();
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
-    }
+      _repeats = 1;
+    }    
+    if (_repeats >= 5) {
+      sendCode(_ourCall);
+      _repeats = 1;
+    }    
+    Serial.println(_repeats);
+    _repeats++;
   }
+ 
 
   void Morse::_qsoCWabbreviation(void) {
     if (State == ABBRECHO) {
