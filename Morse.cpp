@@ -338,6 +338,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        sendCode("rr");
         nextStep = false;
         return;
       }
@@ -351,9 +352,9 @@ namespace qsoTrainer
       tlg.replace("<ve><ve>", "");
       if (Type == ABBREVIATION) {
         Type = NONE;
-        State = NADA;  
-        sotaqso = false;
+        State = NADA;          
         qsoDisplay::addString("rr");
+        sendCode("rr");
         nextStep = false;
         return;
       }   
@@ -370,6 +371,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        sendCode("rr");
         nextStep = false;
         return;
       }
@@ -383,6 +385,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        sendCode("rr");
         nextStep = false;
         return;
       }
@@ -397,6 +400,7 @@ namespace qsoTrainer
         Type = NONE;
         State = NADA;  
         qsoDisplay::addString("rr");
+        sendCode("rr");
         nextStep = false;
         return;
       }
