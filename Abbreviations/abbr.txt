@@ -1,0 +1,158 @@
+AA All after (used after question mark to request a repetition)
+AB All before (similarly)
+ARRL American Radio Relay League
+ABT About
+ADR Address
+AGN Again
+ANR Another
+ANT Antenna
+ARND Around
+AS Wait
+BCI Broadcast interference
+BCNU Be seeing you
+BK Break (to pause transmission of a message, say)
+BN All between
+BTR Better
+BTU Back to you
+BUG Semiautomatic mechanical key
+BURO Bureau ( "Please send QSL card via my local/national QSL bureau")
+B4 Before
+C Yes; correct
+CBA Callbook address
+CFM Confirm
+CK Check
+CL Clear (I am closing my station)
+CLG . . . Calling
+CONDX Conditions
+COS Because
+CQ Calling ... (calling all stations, any station)
+CS Callsign
+CTL Control
+CUD Could
+CUL See you later
+CUZ Because
+CW Continuous wave (i.e., radiotelegraph)
+CX Conditions
+DE From (or "this is")
+DN Down
+DR Dear
+DX Distance (sometimes refers to long distance contact), foreign countries
+EMRG Emergency
+ENUF Enough
+ES And
+FB Fine business (Analogous to "good")
+FER For
+FM From
+FREQ Frequency
+FWD Forward
+GA Good afternoon or Go ahead (depending on context)
+GE Good evening
+GG Going
+GL Good luck
+GM Good morning
+GN Good night
+GND Ground (ground potential)
+GUD Good
+GX Ground
+HEE Humour intended or laughter - often repeated twice i.e. HEE HEE
+HI Humour intended or laughter
+HR Here, hear
+HV Have
+HW How; How copy
+II I say again
+IMP Impedance
+K Over
+KN Over; only the station named should respond (e.g. W7PTH DE W1AW KN)
+LID Poor operator
+MH Meters high (antenna height)
+MILS Milliamperes
+MNI Many
+MSG Message
+N No; nine
+NIL Nothing
+NR Number; Near
+NW Now
+NX Noise; noisy
+OB Old boy
+OC Old chap
+OK Okay
+OM Old man (any male amateur radio operator is an OM regardless of age)
+OO Official observer
+OP Operator
+OT Old timer
+OTC Old timers club (ARRL-sponsored org. for radio amateurs first licensed 20 or more years ago)
+OOTC Old old timers club (org. for those whose first 2-way radio contact occurred 40+ years ago)
+PLS Please
+PSE Please
+PWR Power
+PX Prefix
+QCWA Quarter Century Wireless Association (org. for radio amateurs licensed for 25 or more years)
+R Are; received as transmitted (origin of "Roger"), or decimal point (depending on context)
+RCVR Receiver
+RFI Radio-frequency interference
+RIG Radio apparatus
+RPT Repeat or report (depending on context)
+RPRT Report
+RST Signal report format (Readability-Signal Strength-Tone)
+RTTY Radioteletype
+RX Receiver, radio
+SAE Self-addressed envelope
+SASE Self-addressed, stamped envelope
+SED Said
+SEZ Says
+SFR So far (proword)
+SIG Signal or signature
+SIGS Signals
+SK Out (prosign), end of contact
+SK Silent Key (a deceased radio amateur)
+SKED Schedule
+SN Soon
+SNR Signal-to-noise ratio
+SRI Sorry
+SSB Single sideband
+STN Station
+T Zero
+TEMP Temperature
+TFC Traffic
+TKS Thanks
+TMW Tomorrow
+TNX Thanks
+TRE There
+TT That
+TU Thank you
+TVI Television interference
+TX Transmit, transmitter
+TXRX Transceiver, transmitter + receiver
+TXT Text
+U You
+UFB Ultra Fine business (Analogous to "very good")
+UR Your or You're (depending on context) Alt: YR
+URS Yours
+VX Voice; phone + French "Vieux" (Old Man as per English "OM")
+VY Very
+W Watts
+WA Word after
+WB Word before
+WDS Words
+WID With
+WKD Worked
+WKG Working
+WL Will
+WUD Would
+WX Weather
+XCVR Transceiver
+XMTR Transmitter
+XYL Wife (ex-YL) (Extra Young Lady, i.e. wife)
+YF Wife
+YL Young lady (originally an unmarried female operator, now used for any female)
+YR Your or You're (depending on context) Alt: UR
+Z Zulu time i.e. UTC (GMT)
+ZX Zero beat
+33 Used as a greeting between YLs (as half of an 88)
+44 Hand shake, half of 88. Often used in Flora and Fauna connections
+55 Wishing success (originates from German "Viele Punkte" -- Many dots/points)
+72 Best Wishes QRP (Low Power) often used by low power station operators (5W or less)
+73 Best regards
+77 Long Live CW (Morse Code), wishing you many happy CW contacts
+88 Love and kisses
+99 Get lost!
