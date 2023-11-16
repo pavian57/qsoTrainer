@@ -57,12 +57,14 @@ unsigned long currentMillis;
 String actSign;
 String actWord;
 String txtSign;
+String cwAbbr;
 
 int menuitem = 1;
 int lastMenuItem = 1;
 
 bool inMenu = false;
 bool chvalue = false;
+bool abbrAvailable = false;
 
 
 
@@ -106,7 +108,7 @@ void setup() {
   } else {
     Serial.println("Unable to activate LittleFS");
   }
-  Serial.println("Setup Speed");
+  Serial.println("Setup CW Speed");
 
   EEPROM.begin(512);
   int addr=0;
@@ -133,10 +135,13 @@ void setup() {
     addr=0;
     addr += EEPROM.put(addr, actualWpm);
     addr += EEPROM.put(addr, actualFarnsWpm);
-    EEPROM.end();
+    
+    EEPROM.end();    
     
   };
   
+  //cwAbbr = Morse::randomcwAbbr;
+
   updateWpm();
   
   Serial.println("done");
