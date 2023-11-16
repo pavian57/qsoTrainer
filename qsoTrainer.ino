@@ -118,6 +118,7 @@ void setup() {
   addr += EEPROM.get(addr, sotaqso);
   EEPROM.commit();
   EEPROM.end();
+  morse.sotaqso = sotaqso;
   /*Serial.print("Setting WPM to ");
   Serial.println(actualWpm);
   Serial.print("Setting Farnsworth to ");
@@ -127,7 +128,7 @@ void setup() {
   if (actualWpm < 5 || actualWpm > 61) {
       Serial.println("Save!");
       actualWpm = 20;
-      actualFarnsWpm = 10;
+      actualFarnsWpm = 0;
       Serial.print("Setting WPM to ");
     Serial.println(actualWpm);
     Serial.print("Setting Farnsworth to ");
@@ -272,12 +273,13 @@ void updateElementLength()
 
 
 int writeToEeprom(int wpm,int fwpm){
-  Serial.println("Save!");
+  Serial.println("Save all!");
   
   EEPROM.begin(512);
   int addr=0;
   addr += EEPROM.put(addr, actualWpm);
   addr += EEPROM.put(addr, actualFarnsWpm);
+  addr += EEPROM.put(addr, sotaqso);
   EEPROM.end();
 
   return 1;
@@ -287,7 +289,7 @@ int writeToEeprom(int wpm,int fwpm){
 
 
 void doubleClick(Button2& btn) {
-  Serial.print("doubleclick:  ");
+  Serial.println("doubleclick:  ");
   if (mode == 2) { 
     qsoDisplay::clearMenu();    
     updateWpm();
