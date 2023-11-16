@@ -167,6 +167,37 @@ namespace qsoTrainer
     }
   }
 
+  String Morse::randomcwAbbr(){
+    int i = 0;
+    char idxbuffer[64]; //declare a buffer - hopefully this speeds things up...
+    long fsize = 0;
+    long randNumber;
+    
+    if (LittleFS.exists(F("/abbr.idx"))  &&  LittleFSActive) {
+      File f1 = LittleFS.open("/abbr.txt", "r");
+      File fx = LittleFS.open("/abbr.idx", "r");
+      randomSeed(millis());
+      fsize = fx.size();
+      randNumber = random(0, (fsize / 8) - 1);
+
+      fx.seek(randNumber * 8);
+      fx.read((byte *)&_idx, 8);
+
+      f1.seek(_idx.pos);
+      int l = f1.readBytesUntil(' ', idxbuffer, sizeof(idxbuffer));
+      idxbuffer[l] = 0;
+      _ourAbbr = String(idxbuffer);
+      _ourAbbr.toLowerCase();
+      
+      fx.close();
+      f1.close();
+      return _ourAbbr;
+    } else {
+      return "no abbreviation found";
+    }
+  }
+  
+
   String Morse::randomCall()
   {
     int i = 0;
@@ -316,18 +347,19 @@ namespace qsoTrainer
     
     if (strstr(tlg.c_str(), "<ve><ve>") != NULL && Type != TRAINING) 
     {
-      qsoDisplay::addString("sota");
-      tlg.replace("sota", "");
-      sotaqso = true;
-      Serial.println("sota");
-      if (Type == CHASER) {
+      qsoDisplay::addString("<ve>");
+      tlg.replace("<ve><ve>", "");
+      if (Type == ABBREVIATION) {
         Type = NONE;
         State = NADA;  
         sotaqso = false;
         qsoDisplay::addString("rr");
         nextStep = false;
         return;
-      }    
+      }   
+      Type = ABBREVIATION;
+      State = ABBRECHO;
+      nextStep = true;
     }
 
     if (strstr(tlg.c_str(), "<ka><ka>") != NULL && Type != TRAINING)
@@ -385,6 +417,9 @@ namespace qsoTrainer
       break;
     case (CALLSIGN):
       _qsoCallSign();
+      break;
+    case (ABBREVIATION):
+      _qsoCWabbreviation();
       break;
     default:
       break;
@@ -730,8 +765,6 @@ namespace qsoTrainer
   }
 
   void Morse::_qsoCallSign(void) {
-  
-    
     if (State == CSECHO) {
       Serial.println("Callsign Training");
       _ourCall = Morse::randomCall();
@@ -746,6 +779,24 @@ namespace qsoTrainer
       _ourCall = Morse::randomCall();
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
+    }
+  }
+
+  void Morse::_qsoCWabbreviation(void) {
+    if (State == ABBRECHO) {
+      Serial.println("Abbreviation Training");
+      _ourAbbr = Morse::randomcwAbbr();
+      sendCode(_ourAbbr);
+      qsoDisplay::addString(_ourAbbr);
+      State = ABBRWAIT;
+    }
+    tlg.trim();
+    if (strstr(tlg.c_str(), _ourAbbr.c_str()) && State == ABBRWAIT) {
+      qsoDisplay::addString(tlg);
+      tlg.replace(tlg, "");
+      _ourAbbr = Morse::randomcwAbbr();
+      sendCode(_ourAbbr);
+      qsoDisplay::addString(_ourAbbr);
     }
   }
 
