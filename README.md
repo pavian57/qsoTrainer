@@ -1,8 +1,7 @@
 # Simple cw qsoTrainer by hb9fvk (ruedi) for Arduino 
 
-This is a small program for esp8266 Arduino that creates a cw SOTA qsoTrainer, either as a Chaser or Activator, depending what you give with your key.
+This is a small program for esp8266 Arduino that creates a cw SOTA qsoTrainer, either as a Chaser or Activator, depending what you give with your paddle.
 
-https://www.aliexpress.com/item/4001018066912.html?spm=a2g0o.cart.0.0.532b3c00ry3sqO&mp=1
 
 Entering `**sksk**` goes back to the first step. 
 
@@ -14,7 +13,6 @@ You			: xy3cba gd 559 559 bk
 qsoTrainer	: rr gd 559 559 ref xy/ja134 bk  
 You			: 73 tu ee  
 qsoTrainer	: xy2ghj
-
 
 2. If you give a `**kaka**`, the qsoTrainer will act as an Activator, you are the chaser.  
 
@@ -34,8 +32,11 @@ give `**asas**` again to leave the trainer mode, the reset button does the same.
 
 give `**btbt**` again to leave the Callsign mode, the reset button does the same.
 
+5. If you give a `**veve**`, the qsoTrainer will echo CW Abbreviations you give back with the paddle.  
 
-5. to change WPM and set SOTA Qso, doubclick the eoncoder, to enter Menu, to change value click once.
+give `**veve**` again to leave the Abbreviation  mode, the reset button does the same.
+
+6. to change WPM and set SOTA Qso, doubclick the eoncoder, to enter Menu, to change value click once.
 
 ## Requirements
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
@@ -55,11 +56,16 @@ If there are no files, random call and summit will be made by the code.
 
 **Hardware**
 
-- ESP8266 Microcontroller , i used Wifikit 8 from Heltec.  
-- Oled Display 128x32 I2C  
-- simple Rotaryencoder
-- 3.5mm Jack 3pol female for keyer
-- 3.5mm Jack 3pol female for headset
+- ESP8266 Microcontroller , i used Wifikit 8 from Heltec with Oled Display 128x32 I2C  
+    https://www.aliexpress.com/w/wholesale-heltec-wifi-kit-8.html?spm=a2g0o.home.search.0
+- simple Rotaryencoder 
+    https://www.aliexpress.com/w/wholesale-360-Rotary-Encoder.html?spm=a2g0o.detail.search.0
+- 3.5mm Jack 3pol female for Paddle and Headset
+    https://www.aliexpress.com/w/wholesale-3.5mm-socket.html?spm=a2g0o.productlist.search.0
+- 10K Potentiometer
+    https://www.aliexpress.com/w/wholesale-RV09-Potentiometer.html?spm=a2g0o.detail.search.0
+- 100 Ohm Reistor
+
 
 
 ## Installation
@@ -102,7 +108,7 @@ Use the Arduino IDE or VS Code
 
 1. Connect the ESP8266, setup SPIFFS and upload data directory.   
 2. Upload Sketch.  
-3. connect keyer and or beeper or headset and start exploring qsoTrainer
+3. connect paddle and headset and start exploring qsoTrainer
 
 
 ## Future Improvements
