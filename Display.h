@@ -10,9 +10,10 @@ namespace qsoDisplay {
     void addString(String txt);    
 
     void prepareMenu();
-    void printMenu(int val1, int val2, int val3);
-    void updateMenu(int menupos,int lastmenupos);
+    void printMenu(int page, int val1, int val2, int val3);
+    void updateMenu(int page, int menupos,int lastmenupos);
     void updateValues(int position, int val);
+    void updateValues2d(int position, int val);
     void setMenuPointertoValues(int pos);
     void restsetMenuPointertoValues(int pos);    
     void clearMenu();

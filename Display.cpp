@@ -72,40 +72,73 @@ void prepareMenu(){
 
 
 
-void printMenu(int val1,int val2, int val3){
+void printMenu(int page, int val1,int val2, int val3){
   String menu1 = "WPM";
   String menu2 = "Farnsworth";
-  String menu3 = "SOTA Qso";
-
-  oled.printf(10,1,"%s",menu1.c_str());      
-  oled.printf(90,1,"%02d",val1);        
-  oled.printf(10,10,"%s",menu2.c_str());      
-  oled.printf(90,10,"%02d",val2);        
-  oled.printf(10,19,"%s",menu3.c_str());      
-  oled.printf(96,19,"%d",val3);        
-  oled.printf(0,1,">"); 
+  String menu3 = "SOTA Mode";
+  String menu4 = "Paddle Polarity";
+  if (page == 1) {
+    oled.printf(10,1,"%s",menu1.c_str());      
+    oled.printf(116,1,"%02d",val1);        
+    oled.printf(10,10,"%s",menu2.c_str());      
+    oled.printf(116,10,"%02d",val2);        
+    oled.printf(10,19,"%s",menu3.c_str());      
+    oled.printf(116,19,"%2d",val3);        
+  } else if (page == 2) {
+    oled.printf(10,1,"%s",menu2.c_str());      
+    oled.printf(116,1,"%02d",val1);        
+    oled.printf(10,10,"%s",menu3.c_str());      
+    oled.printf(116,10,"%2d",val2);        
+    oled.printf(10,19,"%s",menu4.c_str());      
+    oled.printf(116,19,"%2d",val3);       
+  }   
   oled.display();
 }
 
-void updateMenu(int menupos,int lastmenupos){
+void updateMenu(int page, int menupos,int lastmenupos){
   
-  if (lastmenupos == 1) { 
-    oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
-  } else if (lastmenupos == 2) { 
-    oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
-  } else if (lastmenupos == 3) { 
-    oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  if (page == 1) {
+    if (lastmenupos == 1) { 
+      oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    } else if (lastmenupos == 2) { 
+      oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    } else if (lastmenupos == 3) { 
+      oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    } 
+  } else if (page == 2) {      
+    if (lastmenupos == 4) { 
+      Serial.println(" 4 ");
+      oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    } else if (lastmenupos == 5) { 
+      Serial.println(" 5 ");
+      oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    } else if (lastmenupos == 6) { 
+      Serial.println(" 6 ");
+      oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+    }
   }
-
-  if (menupos == 1) { 
-    oled.printf(0,1,">");
-  } else if (menupos == 2) { 
-    oled.printf(0,10,">");
-  } else if (menupos == 3) { 
-    oled.printf(0,19,">");
+  
+  if (page == 1) {      
+    if (menupos == 1) { 
+      oled.printf(0,1,">");
+    } else if (menupos == 2) { 
+      oled.printf(0,10,">");
+    } else if (menupos == 3) { 
+      oled.printf(0,19,">");
+    }
+  } else if (page == 2) {      
+    if (menupos == 4) { 
+      oled.printf(0,1,">");
+    } else if (menupos == 5) { 
+      oled.printf(0,10,">");
+    } else if (menupos == 6) { 
+      oled.printf(0,19,">");
+    }
   }
   oled.display();
 }
+
+
 
 void clearMenu(){
   oled.clear();
@@ -114,31 +147,45 @@ void clearMenu(){
 }
 
 void updateValues(int position, int val){
-  Serial.printf("Position: %d",position);
-  if (position == 19) {
-    oled.draw_string(93,19,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
-    oled.printf(96,19,"%d",val);  
-  } else {
-    oled.draw_string(90,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
-    oled.printf(90,position,"%02d",val);  
-    
-  }
+  oled.draw_string(116,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  oled.printf(116,position,"%02d",val);  
   oled.display();
 }
+
+void updateValues2d(int position, int val){
+  oled.draw_string(116,position,"~~~",OLED::NORMAL_SIZE , OLED::BLACK); 
+  oled.printf(116,position,"%2d",val);  
+  oled.display();
+}
+
+
+
 
 void setMenuPointertoValues(int pos){
   switch(pos){
          case 1: 
             oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
-            oled.draw_string(75,1,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            oled.draw_string(108,1,">",OLED::NORMAL_SIZE , OLED::WHITE); 
             break;
           case 2:
             oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK);
-            oled.draw_string(75,10,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            oled.draw_string(108,10,">",OLED::NORMAL_SIZE , OLED::WHITE); 
             break;
           case 3:
             oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
-            oled.draw_string(75,19,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            oled.draw_string(108,19,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+          case 4: 
+            oled.draw_string(0,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+            oled.draw_string(108,1,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+          case 5:
+            oled.draw_string(0,10,"~",OLED::NORMAL_SIZE , OLED::BLACK);
+            oled.draw_string(108,10,">",OLED::NORMAL_SIZE , OLED::WHITE); 
+            break;
+          case 6:
+            oled.draw_string(0,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+            oled.draw_string(108,19,">",OLED::NORMAL_SIZE , OLED::WHITE); 
             break;
         default: break;                     
      }
@@ -148,15 +195,27 @@ void setMenuPointertoValues(int pos){
 void restsetMenuPointertoValues(int pos){
   switch(pos){
       case 1:
-        oled.draw_string(75,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(108,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
         oled.draw_string(0,1,">",OLED::NORMAL_SIZE , OLED::WHITE);    
         break;
       case 2:
-        oled.draw_string(75,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(108,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
         oled.draw_string(0,10,">",OLED::NORMAL_SIZE , OLED::WHITE);    
         break;
       case 3:
-        oled.draw_string(75,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(108,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,19,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      case 4:
+        oled.draw_string(108,1,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,1,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      case 5:
+        oled.draw_string(108,10,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
+        oled.draw_string(0,10,">",OLED::NORMAL_SIZE , OLED::WHITE);    
+        break;
+      case 6:
+        oled.draw_string(108,19,"~",OLED::NORMAL_SIZE , OLED::BLACK); 
         oled.draw_string(0,19,">",OLED::NORMAL_SIZE , OLED::WHITE);    
         break;
       default: break;  
