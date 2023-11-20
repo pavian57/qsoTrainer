@@ -23,8 +23,8 @@ using namespace qsoTrainer;
 #define P_DOT    13   // Connects to the dot lever of the paddle
 #define P_DASH   00   // Connects to the dash lever of the paddle
 
-#define P_UP  12  //sda
-#define P_DOWN  14  //scl
+#define P_UP  14  //sda
+#define P_DOWN  12  //scl
 #define P_BUTTON 02  //d3
 
 #define P_AUDIO    15 // Audio output
@@ -61,7 +61,10 @@ String cwAbbr;
 
 int menuitem = 1;
 int lastMenuItem = 1;
-int sotaqso;
+int sotaqso = 0; // no sota
+int paddlepolarity = 0; // 0 = . Left, 1 = - Left
+
+int page = 1;
 
 bool inMenu = false;
 bool chvalue = false;
@@ -116,14 +119,10 @@ void setup() {
   addr += EEPROM.get(addr, actualWpm);
   addr += EEPROM.get(addr, actualFarnsWpm);
   addr += EEPROM.get(addr, sotaqso);
+  addr += EEPROM.get(addr, paddlepolarity);
   EEPROM.commit();
   EEPROM.end();
   morse.sotaqso = sotaqso;
-  /*Serial.print("Setting WPM to ");
-  Serial.println(actualWpm);
-  Serial.print("Setting Farnsworth to ");
-  Serial.println(actualFarnsWpm);
-  Serial.println("EEPROM"); */
   
   if (actualWpm < 5 || actualWpm > 61) {
       Serial.println("Save!");
@@ -133,12 +132,13 @@ void setup() {
     Serial.println(actualWpm);
     Serial.print("Setting Farnsworth to ");
     Serial.println(actualFarnsWpm);
-    Serial.println("NEU");
+
     EEPROM.begin(512);
     addr=0;
     addr += EEPROM.put(addr, actualWpm);
     addr += EEPROM.put(addr, actualFarnsWpm);
     addr += EEPROM.put(addr, sotaqso);
+    addr += EEPROM.put(addr, paddlepolarity);
     EEPROM.end();    
     
   };
@@ -166,8 +166,13 @@ void loop()
   
 
   if ( mode == 1 ) {
-    ditState = digitalRead(P_DOT);
-    dahState = digitalRead(P_DASH); 
+    if (paddlepolarity) {
+      dahState = digitalRead(P_DOT);
+      ditState = digitalRead(P_DASH); 
+    } else {
+      ditState = digitalRead(P_DOT);
+      dahState  = digitalRead(P_DASH); 
+    }
     currentMillis = millis();
  
   if ((ditState == LOW)&(dahState == HIGH)) {       
@@ -272,14 +277,15 @@ void updateElementLength()
 }
 
 
-int writeToEeprom(int wpm,int fwpm){
+int writeToEeprom(){
   Serial.println("Save all!");
-  
+
   EEPROM.begin(512);
   int addr=0;
   addr += EEPROM.put(addr, actualWpm);
   addr += EEPROM.put(addr, actualFarnsWpm);
   addr += EEPROM.put(addr, sotaqso);
+  addr += EEPROM.put(addr, paddlepolarity);
   EEPROM.end();
 
   return 1;
@@ -293,10 +299,7 @@ void doubleClick(Button2& btn) {
   if (mode == 2) { 
     qsoDisplay::clearMenu();    
     updateWpm();
-    
-    if (actualWpmPrev != actualWpm || actualFarnsWpmPrev != actualFarnsWpm) {
-      int i = writeToEeprom(actualWpm, actualFarnsWpm);
-    } 
+    int i = writeToEeprom();
     mode = 1;
     inMenu = false;
   } else {
@@ -305,8 +308,8 @@ void doubleClick(Button2& btn) {
     menuitem = 1;
     lastMenuItem = 1;  
     qsoDisplay::prepareMenu();
-    qsoDisplay::printMenu(actualWpm, actualFarnsWpm, morse.sotaqso);    
-    rotary.setUpperBound(4);
+    qsoDisplay::printMenu(page, actualWpm, actualFarnsWpm, sotaqso);    
+    rotary.setUpperBound(7);
     rotary.setLowerBound(0);
     rotary.resetPosition(1,false);
   }
@@ -317,7 +320,7 @@ void singleClick(Button2& btn) {
 
   if (inMenu) {    
     if (chvalue) {            
-      rotary.setUpperBound(4);
+      rotary.setUpperBound(7);
       rotary.setLowerBound(0);
       rotary.resetPosition(menuitem,false);
       qsoDisplay::restsetMenuPointertoValues(menuitem);
@@ -340,6 +343,18 @@ void singleClick(Button2& btn) {
           case 3:
             qsoDisplay::setMenuPointertoValues(3);            
             break;
+          case 4: 
+            rotary.setUpperBound(11);
+            rotary.setLowerBound(-1);
+            rotary.resetPosition(actualFarnsWpm,false);                        
+            qsoDisplay::setMenuPointertoValues(4);
+          break;
+          case 5:            
+            qsoDisplay::setMenuPointertoValues(5);
+          break;
+          case 6:
+            qsoDisplay::setMenuPointertoValues(6);            
+            break;
         default: break;                     
      }
     }   
@@ -351,23 +366,61 @@ void rotate(ESPRotary& r) {
 
   if (inMenu && !chvalue) {
     lastMenuItem = menuitem;
-    menuitem = rotary.getPosition();      
-    qsoDisplay::updateMenu(menuitem,lastMenuItem);    
+    menuitem = rotary.getPosition();   
+    if (menuitem >= 4) {   
+      if (page != 2) {
+        qsoDisplay::prepareMenu();
+        qsoDisplay::printMenu(2, actualFarnsWpm, morse.sotaqso, paddlepolarity);            
+      }
+      page = 2;                  
+    } else {      
+      if (page != 1) {
+        qsoDisplay::prepareMenu();
+        qsoDisplay::printMenu(1, actualWpm, actualFarnsWpm, morse.sotaqso);
+        
+      }
+      page = 1;            
+    }  
+    qsoDisplay::updateMenu(page, menuitem,lastMenuItem);        
   } 
 
   if (inMenu && chvalue ) {    
     if (menuitem == 1) {           
-          actualWpm = rotary.getPosition();
-          qsoDisplay::updateValues(1,actualWpm);         
-      } else if (menuitem == 2){ 
-          actualFarnsWpm = rotary.getPosition();
-          qsoDisplay::updateValues(10,actualFarnsWpm); 
-      } else if (menuitem == 3) { 
-          morse.sotaqso =  (morse.sotaqso == 0) ? 1 : 0;
-          qsoDisplay::updateValues(19,morse.sotaqso); 
-          sotaqso = morse.sotaqso;
-      }
+        actualWpm = rotary.getPosition();
+        qsoDisplay::updateValues(1,actualWpm);         
+    } else if (menuitem == 2){ 
+        actualFarnsWpm = rotary.getPosition();
+        qsoDisplay::updateValues(10,actualFarnsWpm); 
+    } else if (menuitem == 3) { 
+        sotaqso = morse.sotaqso;        
+        sotaqso =  (sotaqso == 0) ? 1 : 0;
+        qsoDisplay::updateValues2d(19,sotaqso); 
+        morse.sotaqso = sotaqso;
+        
+    } else if (menuitem == 4) {           
+        actualFarnsWpm = rotary.getPosition();
+        qsoDisplay::updateValues(1,actualFarnsWpm);         
+    } else if (menuitem == 5){ 
+        sotaqso = morse.sotaqso;        
+        sotaqso =  (sotaqso == 0) ? 1 : 0;
+        qsoDisplay::updateValues2d(10,sotaqso); 
+        morse.sotaqso = sotaqso;
+    } else if (menuitem == 6) { 
+        paddlepolarity =  (paddlepolarity == 0) ? 1 : 0;        
+        qsoDisplay::updateValues2d(19,paddlepolarity);         
+    }
   } 
+
+  Serial.println("-----------------------------------------");
+  Serial.print("menuitem: ");
+  Serial.println(menuitem);
+
+  Serial.print("lastMenuItem: ");
+  Serial.println(lastMenuItem);   
+
+ 
+  Serial.print("page: ");
+  Serial.println(page);
 }
 
 
