@@ -36,7 +36,7 @@ give `**btbt**` again to leave the Callsign mode, the reset button does the same
 
 give `**veve**` again to leave the Abbreviation  mode, the reset button does the same.
 
-6. to change WPM and set SOTA Qso, doubclick the eoncoder, to enter Menu, to change value click once.
+6. to change WPM, Farnsworth, SOTA Mode dnd Paddle Polarity, doubclick the rotaryeoncoder, to enter Menu, to change a value click once.
 
 ## Requirements
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
