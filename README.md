@@ -36,7 +36,7 @@ give `**btbt**` again to leave the Callsign mode, the reset button does the same
 
 give `**veve**` again to leave the Abbreviation  mode, the reset button does the same.
 
-6. to change WPM, Farnsworth, SOTA Mode dnd Paddle Polarity, doubclick the rotaryeoncoder, to enter Menu, to change a value click once.
+6. to change WPM, Farnsworth, SOTA Mode and Paddle Polarity, doubclick the Black Knob (rotaryeoncoder), to enter Menu, to change a value click once.
 
 ## Requirements
 It runs on any compatible ESP8266 with a small Oled dispay 0.96".  preferable Wifikit from Heltec. 
@@ -65,6 +65,8 @@ If there are no files, random call and summit will be made by the code.
 - 10K Potentiometer
     https://www.aliexpress.com/w/wholesale-RV09-Potentiometer.html?spm=a2g0o.detail.search.0
 - 100 Ohm Reistor
+- Small Loudspeaker
+    https://www.aliexpress.com/w/wholesale-Loudspeaker-1W-8ohm.html?spm=a2g0o.productlist.search.0
 
 
 
@@ -109,6 +111,14 @@ Use the Arduino IDE or VS Code
 1. Connect the ESP8266, setup SPIFFS and upload data directory.   
 2. Upload Sketch.  
 3. connect paddle and headset and start exploring qsoTrainer
+
+## Logging
+
+To see what you are keying, connect a Serial Terminal or use a Tablet and connect to WifiAp = qsoTrainer no Password, us a Telneclient to listen to 192.168.4.22:8088, i use ConnectBot for Android. 
+https://play.google.com/store/apps/details?id=org.connectbot&hl=en_US
+
+
+
 
 
 ## Future Improvements
