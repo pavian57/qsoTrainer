@@ -31,15 +31,13 @@ using namespace qsoTrainer;
 
 #define CLICKS_PER_STEP   4   // this number depends on your rotary encoder 
 
-//const int minWpm = 6;
-//const int maxWpm = 50;
-
-
 int actualWpm; // = 20;  5 - 50
 int actualFarnsWpm; // = 10; 0-10
 
 int actualWpmPrev; // = 20;  5 - 50
 int actualFarnsWpmPrev; // = 10; 0-10
+
+
 
 int ditState = 0;        
 int dahState = 0;
@@ -286,6 +284,7 @@ int writeToEeprom(){
   addr += EEPROM.put(addr, actualFarnsWpm);
   addr += EEPROM.put(addr, sotaqso);
   addr += EEPROM.put(addr, paddlepolarity);
+  EEPROM.commit();
   EEPROM.end();
 
   return 1;
