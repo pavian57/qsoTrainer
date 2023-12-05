@@ -821,7 +821,7 @@ Activator: CQ SOTA DE XY2ABC XY/KB023 K
 Chaser   : XY2DEF
 Activator: XY2DEF GD 559 559 BK
 Chaser   : RR GD 559 559 REF XY/KB045 XY/KB045 73 TU BK
-Activator: 73 TU
+Activator: 73 TU EE
 Chaser   : XY2GHJ
 
 */
