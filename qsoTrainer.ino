@@ -262,7 +262,7 @@ void updateElementLength()
   Serial.println(elementLengthMs);
 
   if (actualFarnsWpm > 0) {
-    elementLengthMsFarns = 1200 / actualFarnsWpm;
+    elementLengthMsFarns = 1200 / (actualWpm - actualFarnsWpm );
     Serial.print("elementLengthMsFarns: ");
     morse.farnsLength = elementLengthMsFarns;  
     Serial.println(elementLengthMsFarns);
