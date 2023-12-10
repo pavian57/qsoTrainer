@@ -88,6 +88,10 @@ namespace qsoTrainer
     {
       return "<ve>";
     }
+    if (code == ".-.-.")
+    {
+      return "<ar>";
+    }
 
 
     /*
@@ -98,6 +102,9 @@ namespace qsoTrainer
                <sk> ...-.-
                <ve> ...-.
                <bt> -...-
+               <ar> .-.-.
+               <hh> ........
+               <cl> -.-.
     */
       
                
@@ -165,6 +172,25 @@ namespace qsoTrainer
     {
       delay(farnsLength * 7);
     }
+  }
+
+  String Morse::randomcwChar(){
+    int i = 0;
+    //Serial.printf("numChars %d\n",_numChars);
+
+    if (_numChars == 1) {
+      _ourChar =  MorseMap[random(0, 35)].letter;
+      return _ourChar;
+    } else {
+      _ourChar.clear();
+    }
+    while (i < _numChars) {
+        _ourChar += MorseMap[random(0, 35)].letter;
+        i++;
+      }
+    
+    return _ourChar;
+    //callsign += MorseMap[random(26, 35)].letter;  
   }
 
   String Morse::randomcwAbbr(){
@@ -325,6 +351,7 @@ namespace qsoTrainer
     {
       qsoDisplay::addString("<sk>");
       tlg.replace("<sk><sk>", "");
+      qsoDisplay::addString("73");
       sendCode("73");
       Type = NONE;
       State = NADA;
@@ -408,6 +435,23 @@ namespace qsoTrainer
       State = CSECHO;
       nextStep = true;
     }
+    if (strstr(tlg.c_str(), "<ar><ar>") != NULL)
+    {
+      qsoDisplay::addString("<ar>");
+      if (Type == CHAR) {
+        Type = NONE;
+        State = NADA;  
+        qsoDisplay::addString("rr");
+        sendCode("rr");
+        nextStep = false;
+        return;
+      }
+      Type = CHAR;
+      State = CHARECHO;
+      nextStep = true;
+    }
+
+
     switch (Type)
     {
     case ACTIVATE:
@@ -424,6 +468,9 @@ namespace qsoTrainer
       break;
     case (ABBREVIATION):
       _qsoCWabbreviation();
+      break;
+    case (CHAR):
+      _qsoCWchar();
       break;
     default:
       break;
@@ -782,11 +829,11 @@ namespace qsoTrainer
       _ourCall = Morse::randomCall();
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
-      _repeats = 1;
+      _repeats = 0;
     }    
     if (_repeats >= 5) {
       sendCode(_ourCall);
-      _repeats = 1;
+      _repeats = 0;
     }    
     Serial.println(_repeats);
     _repeats++;
@@ -811,9 +858,39 @@ namespace qsoTrainer
     }
   }
 
+  void Morse::_qsoCWchar(void) {
+    if (State == CHARECHO) {
+      Serial.println("single char Training");
+      _ourChar = Morse::randomcwChar();
+      sendCode(_ourChar);
+      qsoDisplay::addString(_ourChar);
+      State = CHARWAIT;
+      _repeats = 0;
+    } else {
+      tlg.trim();
+      //Serial.printf("tlg %s\n",tlg.c_str());
+      if (strstr(tlg.c_str(), "ar")) _numChars++;
+
+      if (strstr(tlg.c_str(), _ourChar.c_str()) && State == CHARWAIT) {
+        //qsoDisplay::addString(tlg);
+        tlg.replace(tlg, "");
+        _ourChar = Morse::randomcwChar();
+        sendCode(_ourChar);
+        qsoDisplay::addString(_ourChar);
+        _repeats = 0;
+      }
+      if (_repeats >= 5) {
+      sendCode(_ourChar);
+      _repeats = 0;
+    }    
+    Serial.printf("repeats %d\n",_repeats);   
+    Serial.printf("numChars %d\n",_numChars);   
+    _repeats++;          
+    }
+
+  }
 
 }
-
 
 /*
 

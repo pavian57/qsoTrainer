@@ -77,7 +77,8 @@ namespace qsoTrainer
 		CHASER,
 		ACTIVATE,
 		CALLSIGN,
-		ABBREVIATION
+		ABBREVIATION,
+		CHAR
 	};
 
 	enum qsoStatechase
@@ -118,7 +119,10 @@ namespace qsoTrainer
 		CSKEYOK,
 		ABBRECHO,
 		ABBRWAIT,
-		ABBROK
+		ABBROK,
+		CHARECHO,
+		CHARWAIT,
+		CHAROK
 	};
 
 	struct index
@@ -150,15 +154,18 @@ namespace qsoTrainer
 		String randomRST();
 		String randomSummit();
 		String randomcwAbbr();
+		String randomcwChar();
 		bool LittleFSActive = false;
 
 	private:
 		int _soundPin;
 		int _calllength;
 		int _repeats;
+		int _numChars = 1;
 		String _hisCall;
 		String _ourCall;
 		String _ourAbbr;
+		String _ourChar;
 		String _ourName;
 		String _summit;
 		String _mysummit;
@@ -171,6 +178,7 @@ namespace qsoTrainer
 		void _qsoTraining();
 		void _qsoCallSign();
 		void _qsoCWabbreviation();
+		void _qsoCWchar();
 	};
 
 }
