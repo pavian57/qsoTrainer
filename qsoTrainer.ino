@@ -240,13 +240,7 @@ void updateWpm()
   Serial.println(actualWpm);
   Serial.print("Setting Farnsworth to ");
   Serial.println(actualFarnsWpm);
-
-  rotary.setUpperBound(51);
-  rotary.setLowerBound(4);
-  rotary.resetPosition(actualWpm,false);
-
-
-     // Calculate millisecond bit length from new WPM
+      // Calculate millisecond bit length from new WPM
   updateElementLength();
   
 }
@@ -262,6 +256,7 @@ void updateElementLength()
   Serial.println(elementLengthMs);
 
   if (actualFarnsWpm > 0) {
+    if (actualWpm >= actualFarnsWpm) exit;
     elementLengthMsFarns = 1200 / (actualWpm - actualFarnsWpm );
     Serial.print("elementLengthMsFarns: ");
     morse.farnsLength = elementLengthMsFarns;  
