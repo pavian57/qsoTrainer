@@ -92,6 +92,10 @@ namespace qsoTrainer
     {
       return "<ar>";
     }
+    if (code == "-....-")
+    {
+      return "<ba>";
+    }
 
 
     /*
@@ -443,6 +447,7 @@ namespace qsoTrainer
         State = NADA;  
         qsoDisplay::addString("rr");
         sendCode("rr");
+        _numChars = 1;
         nextStep = false;
         return;
       }
@@ -869,8 +874,14 @@ namespace qsoTrainer
     } else {
       tlg.trim();
       //Serial.printf("tlg %s\n",tlg.c_str());
-      if (strstr(tlg.c_str(), "ar")) _numChars++;
-
+      if (strstr(tlg.c_str(), "ar")) { 
+        _numChars++;
+        sendCode(String(_numChars));
+      }
+      if (strstr(tlg.c_str(), "ba")) {
+        if(_numChars > 1) _numChars--;
+        sendCode(String(_numChars));
+      }
       if (strstr(tlg.c_str(), _ourChar.c_str()) && State == CHARWAIT) {
         //qsoDisplay::addString(tlg);
         tlg.replace(tlg, "");

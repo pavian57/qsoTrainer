@@ -38,7 +38,7 @@ give `**veve**` again to leave the Abbreviation  mode, the reset button does the
 
 6. If you give a `**arar**`, the qsoTrainer will echo CW Abbreviations you give back with the paddle.  
 
-give `**arar**` again to leave the Abbreviation  mode, the reset button does the same. Each time you send ar, it will send 2 or more characters, depending how many time you give ar.
+give `**arar**` again to leave the Abbreviation  mode, the reset button does the same. Each time you send "ar", it will increase the number of characters, "ba" decreases.
 
 7. to change WPM, Farnsworth, SOTA Mode and Paddle Polarity, doubclick the Black Knob (rotaryeoncoder), to enter Menu, to change a value click once.
 

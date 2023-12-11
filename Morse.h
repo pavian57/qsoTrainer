@@ -56,7 +56,7 @@ namespace qsoTrainer
 			{'0', "-----"},
 
 			{' ', "     "},	 //Gap between word, seven units
-			{'.', ".–.–.–"}, // fixed
+			{'.', ".-.-.-"}, // fixed
 			{',', "--..--"},
 			{'?', "..--.."},
 			{'!', "-.-.--"},
