@@ -379,6 +379,7 @@ namespace qsoTrainer
     
     if (strstr(tlg.c_str(), "<ve><ve>") != NULL && Type != TRAINING) 
     {
+      randomSeed(millis());
       qsoDisplay::addString("<ve>");
       tlg.replace("<ve><ve>", "");
       if (Type == ABBREVIATION) {
@@ -426,6 +427,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<bt><bt>") != NULL)
     {
+      randomSeed(millis());
       qsoDisplay::addString("<bt>");
       if (Type == CALLSIGN) {
         Type = NONE;
@@ -441,6 +443,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<ar><ar>") != NULL)
     {
+      randomSeed(millis());
       qsoDisplay::addString("<ar>");
       if (Type == CHAR) {
         Type = NONE;
@@ -825,23 +828,24 @@ namespace qsoTrainer
       sendCode(_ourCall);
       qsoDisplay::addString(_ourCall);
       State = CSWAIT;
-           
+      _repeats = 0;     
+    } else {
+      tlg.trim();
+      if (strstr(tlg.c_str(), _ourCall.c_str()) && State == CSWAIT) {
+        qsoDisplay::addString(tlg);
+        tlg.replace(tlg, "");
+        _ourCall = Morse::randomCall();
+        sendCode(_ourCall);
+        qsoDisplay::addString(_ourCall);
+        _repeats = 0;
+      }    
+      if (_repeats >= 5) {
+        sendCode(_ourCall);
+        _repeats = 0;
+      }    
+      Serial.println(_repeats);
+      _repeats++;
     }
-    tlg.trim();
-    if (strstr(tlg.c_str(), _ourCall.c_str()) && State == CSWAIT) {
-      qsoDisplay::addString(tlg);
-      tlg.replace(tlg, "");
-      _ourCall = Morse::randomCall();
-      sendCode(_ourCall);
-      qsoDisplay::addString(_ourCall);
-      _repeats = 0;
-    }    
-    if (_repeats >= 5) {
-      sendCode(_ourCall);
-      _repeats = 0;
-    }    
-    Serial.println(_repeats);
-    _repeats++;
   }
  
 
@@ -852,18 +856,30 @@ namespace qsoTrainer
       sendCode(_ourAbbr);
       qsoDisplay::addString(_ourAbbr);
       State = ABBRWAIT;
-    }
-    tlg.trim();
-    if (strstr(tlg.c_str(), _ourAbbr.c_str()) && State == ABBRWAIT) {
-      qsoDisplay::addString(tlg);
-      tlg.replace(tlg, "");
-      _ourAbbr = Morse::randomcwAbbr();
-      sendCode(_ourAbbr);
-      qsoDisplay::addString(_ourAbbr);
+      _repeats = 0;
+    } else {
+      tlg.trim();
+      if (strstr(tlg.c_str(), _ourAbbr.c_str()) && State == ABBRWAIT) {
+        qsoDisplay::addString(tlg);
+        tlg.replace(tlg, "");
+        _ourAbbr = Morse::randomcwAbbr();
+        sendCode(_ourAbbr);
+        qsoDisplay::addString(_ourAbbr);
+        _repeats = 0;
+      }
+      if (_repeats >= 5) {
+        sendCode(_ourAbbr);
+        _repeats = 0;     
+      }
+      _repeats++; 
     }
   }
 
   void Morse::_qsoCWchar(void) {
+    if (_repeats >= 5) {
+      sendCode(_ourChar);
+      _repeats = 0;
+    }    
     if (State == CHARECHO) {
       Serial.println("single char Training");
       _ourChar = Morse::randomcwChar();
@@ -873,29 +889,21 @@ namespace qsoTrainer
       _repeats = 0;
     } else {
       tlg.trim();
-      //Serial.printf("tlg %s\n",tlg.c_str());
-      if (strstr(tlg.c_str(), "ar")) { 
+      if (strstr(tlg.c_str(), "ar")) {  // +1
         _numChars++;
         sendCode(String(_numChars));
       }
-      if (strstr(tlg.c_str(), "ba")) {
+      if (strstr(tlg.c_str(), "ba")) {  //-1
         if(_numChars > 1) _numChars--;
         sendCode(String(_numChars));
       }
       if (strstr(tlg.c_str(), _ourChar.c_str()) && State == CHARWAIT) {
-        //qsoDisplay::addString(tlg);
         tlg.replace(tlg, "");
         _ourChar = Morse::randomcwChar();
-        sendCode(_ourChar);
-        qsoDisplay::addString(_ourChar);
         _repeats = 0;
+        qsoDisplay::addString(_ourChar);
+        sendCode(_ourChar);        
       }
-      if (_repeats >= 5) {
-      sendCode(_ourChar);
-      _repeats = 0;
-    }    
-    Serial.printf("repeats %d\n",_repeats);   
-    Serial.printf("numChars %d\n",_numChars);   
     _repeats++;          
     }
 
