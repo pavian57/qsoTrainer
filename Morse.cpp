@@ -24,6 +24,7 @@ namespace qsoTrainer
     _calllength = 6;
     _repeats = 1;
     sotaqso = false;
+    randomSeed(analogRead(A0));   
     if (LittleFS.begin()) {
       LittleFSActive = true;
     }
@@ -206,7 +207,7 @@ namespace qsoTrainer
     if (LittleFS.exists(F("/abbr.idx"))  &&  LittleFSActive) {
       File f1 = LittleFS.open("/abbr.txt", "r");
       File fx = LittleFS.open("/abbr.idx", "r");
-      randomSeed(millis());
+      
       fsize = fx.size();
       randNumber = random(0, (fsize / 8) - 1);
 
@@ -237,7 +238,7 @@ namespace qsoTrainer
     
     if (!LittleFS.exists(F("/names.idx"))  &&  LittleFSActive)
     {
-      randomSeed(millis());
+     
       String callsign;
       callsign += MorseMap[random(0, 25)].letter;
       callsign += MorseMap[random(0, 25)].letter;
@@ -276,7 +277,7 @@ namespace qsoTrainer
   String Morse::randomRST()
   {
     int i = 0;
-    randomSeed(millis());
+    
     String rst = "";
     rst += MorseMap[random(28, 30)].letter;
     rst += MorseMap[random(29, 35)].letter;
@@ -305,7 +306,7 @@ namespace qsoTrainer
     } else {
       File f1 = LittleFS.open("/summitslist.txt", "r");
       File fx = LittleFS.open("/summitslist.idx", "r");
-      randomSeed(millis());
+      
       fsize = fx.size();
       randNumber = random(0, (fsize / 8) - 1);
 
@@ -379,7 +380,7 @@ namespace qsoTrainer
     
     if (strstr(tlg.c_str(), "<ve><ve>") != NULL && Type != TRAINING) 
     {
-      randomSeed(millis());
+      randomSeed(analogRead(A0));   
       qsoDisplay::addString("<ve>");
       tlg.replace("<ve><ve>", "");
       if (Type == ABBREVIATION) {
@@ -427,7 +428,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<bt><bt>") != NULL)
     {
-      randomSeed(millis());
+      randomSeed(analogRead(A0));   
       qsoDisplay::addString("<bt>");
       if (Type == CALLSIGN) {
         Type = NONE;
@@ -443,7 +444,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<ar><ar>") != NULL)
     {
-      randomSeed(millis());
+      randomSeed(analogRead(A0));   
       qsoDisplay::addString("<ar>");
       if (Type == CHAR) {
         Type = NONE;
