@@ -827,7 +827,7 @@ namespace qsoTrainer
       Serial.println("Callsign Training");
       _ourCall = Morse::randomCall();
       sendCode(_ourCall);
-      qsoDisplay::addString(_ourCall);
+      //qsoDisplay::addString(_ourCall);
       State = CSWAIT;
       _repeats = 0;     
     } else {
@@ -855,7 +855,7 @@ namespace qsoTrainer
       Serial.println("Abbreviation Training");
       _ourAbbr = Morse::randomcwAbbr();
       sendCode(_ourAbbr);
-      qsoDisplay::addString(_ourAbbr);
+      //qsoDisplay::addString(_ourAbbr);
       State = ABBRWAIT;
       _repeats = 0;
     } else {
@@ -868,7 +868,7 @@ namespace qsoTrainer
         qsoDisplay::addString(_ourAbbr);
         _repeats = 0;
       }
-      if (_repeats >= 5) {
+      if (_repeats >= 3) {
         sendCode(_ourAbbr);
         _repeats = 0;     
       }
@@ -877,7 +877,7 @@ namespace qsoTrainer
   }
 
   void Morse::_qsoCWchar(void) {
-    if (_repeats >= 5) {
+    if (_repeats >= 3) {
       sendCode(_ourChar);
       _repeats = 0;
     }    
@@ -885,7 +885,7 @@ namespace qsoTrainer
       Serial.println("single char Training");
       _ourChar = Morse::randomcwChar();
       sendCode(_ourChar);
-      qsoDisplay::addString(_ourChar);
+      //qsoDisplay::addString(_ourChar);
       State = CHARWAIT;
       _repeats = 0;
     } else {
@@ -900,9 +900,10 @@ namespace qsoTrainer
       }
       if (strstr(tlg.c_str(), _ourChar.c_str()) && State == CHARWAIT) {
         tlg.replace(tlg, "");
+        qsoDisplay::addString(_ourChar);
         _ourChar = Morse::randomcwChar();
         _repeats = 0;
-        qsoDisplay::addString(_ourChar);
+        //qsoDisplay::addString(_ourChar);
         sendCode(_ourChar);        
       }
     _repeats++;          
