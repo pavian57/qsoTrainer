@@ -184,18 +184,20 @@ void loop()
     actSign = actSign + "-";    
     previousMillis = currentMillis;
       
-  } else if ((dahState == LOW)&(ditState == LOW)) {  
-      if (LastElement == 2) {
-        LastElement = 1;
-        morse.dot();           // ... send a dot at the given elementLengthMs    
-        actSign = actSign + ".";
-        previousMillis = currentMillis;
-      }  else {
-          LastElement = 2;
-          morse.dash();  // ... send a dash at the given elementLengthMs  
-          actSign = actSign + "-";    
-          previousMillis = currentMillis;
-        }    
+  } 
+
+  if ((dahState == LOW)&(ditState == LOW) & (LastElement == 1)) {  
+    LastElement = 2;
+    morse.dash();  // ... send a dash at the given elementLengthMs  
+    actSign = actSign + "-";    
+    previousMillis = currentMillis;
+  }
+  
+  if ((dahState == LOW)&(ditState == LOW) & (LastElement == 2)) {  
+    LastElement = 1;
+    morse.dot();           // ... send a dot at the given elementLengthMs    
+    actSign = actSign + ".";
+    previousMillis = currentMillis;
   }
 
 
