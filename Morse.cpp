@@ -169,14 +169,14 @@ namespace qsoTrainer
         }
       }
     }
-    if (farnsLength == 0)
+    /*if (farnsLength == 0)
     {
       delay(dotLength * 7);
     }
     else
     {
       delay(farnsLength * 7);
-    }
+    }*/
   }
 
   String Morse::randomcwChar(){
