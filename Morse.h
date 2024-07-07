@@ -138,6 +138,7 @@ namespace qsoTrainer
 		int useFansw;
 		int dotLength;
 		int farnsLength = 0;
+		int frequency = 700;
 
 		qsoStatechase State;
 		qsoType Type;
@@ -147,6 +148,8 @@ namespace qsoTrainer
 		void doQso(void);
 		void dot();
 		void dash();
+		void cwOn();
+		void cwOff();
 		void sendCode(String text);
 		String decode(String text);
 		String encode(String code);
