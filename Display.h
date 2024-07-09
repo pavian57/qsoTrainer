@@ -7,6 +7,7 @@
 namespace qsoDisplay {
 
     void initDisplay();
+    void intro(int wpm, int fans, int sota, int polari, int iambic, int freq);
     void addString(String txt);    
 
     void prepareMenu();
@@ -14,8 +15,9 @@ namespace qsoDisplay {
     void updateMenu(int page, int menupos,int lastmenupos);
     void updateValues(int position, int val);
     void updateValues2d(int position, int val);
+    void updateValues3d(int position, int val);
     void setMenuPointertoValues(int pos);
-    void restsetMenuPointertoValues(int pos);    
+    void resetMenuPointertoValues(int pos);    
     void clearMenu();
     
     void handleTelnet();
