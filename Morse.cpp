@@ -32,7 +32,7 @@ namespace qsoTrainer
 
   void Morse::cwOn()
   {
-    tone(_soundPin, frequency);    
+    tone(_soundPin, frequencys[frequency]);    
   }
 
   void Morse::cwOff()
@@ -42,7 +42,7 @@ namespace qsoTrainer
 
   void Morse::dot()
   {
-    tone(_soundPin, frequency);
+    tone(_soundPin, frequencys[frequency]);
     delay(dotLength);
     noTone(_soundPin);
     delay(dotLength);
@@ -50,7 +50,7 @@ namespace qsoTrainer
 
   void Morse::dash()
   {
-    tone(_soundPin, frequency);
+    tone(_soundPin, frequencys[frequency]);
     delay(dotLength * 3);
     noTone(_soundPin);
     delay(dotLength);

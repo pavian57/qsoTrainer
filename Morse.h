@@ -138,7 +138,8 @@ namespace qsoTrainer
 		int useFansw;
 		int dotLength;
 		int farnsLength = 0;
-		int frequency = 700;
+		int frequencys [5] = {622 , 698 , 784 , 880 , 932};
+		int frequency = frequencys[2]; //622, 698, 784, 880,932
 
 		qsoStatechase State;
 		qsoType Type;

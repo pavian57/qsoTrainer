@@ -20,6 +20,7 @@ using namespace qsoTrainer;
 
 #define Version 1.0b
 
+
 #define P_DOT    13   // Connects to the dot lever of the paddle
 #define P_DASH   00   // Connects to the dash lever of the paddle
 
@@ -31,12 +32,24 @@ using namespace qsoTrainer;
 
 #define CLICKS_PER_STEP   4   // this number depends on your rotary encoder 
 
-int actualWpm; // = 20;  5 - 50
-int actualFarnsWpm; // = 10; 0-10
+#define DIT_L    0x01 // Dit latch
+#define DASH_L   0x02 // Dash latch
+#define DIT_PROC 0x04 // Dit is being processed
+#define IAMBICA  0x00 // 0: Iambic A, 1: Iambic B
+#define IAMBICB  0x10 // 0: Iambic A, 1: Iambic B
+
+enum KSTYPE {IDLE, CHK_DIT, CHK_DASH, KEYED_PREP, KEYED, INTER_ELEMENT };
+
+int actualWpm = 18; // = 20;  5 - 50
+int actualFarnsWpm = 5; // = 10; 0-10
 
 int actualWpmPrev; // = 20;  5 - 50
 int actualFarnsWpmPrev; // = 10; 0-10
 
+int sotaqso = 0; // no sota
+int paddlepolarity = 0; // 0 = . Left, 1 = - Left
+int iambicab = 0; // 0 = A, 1 = B
+int frequency = 1;
 
 
 int ditState = 0;        
@@ -51,6 +64,10 @@ int elementLengthMsFarns;
 unsigned long previousMillis = 0 ;
 unsigned long currentMillis;
 
+unsigned char keyerControl, keyerState;
+unsigned long interWordTimer = 0;
+unsigned long interCharTimer = 0;
+
 
 String actSign;
 String actWord;
@@ -59,8 +76,7 @@ String cwAbbr;
 
 int menuitem = 1;
 int lastMenuItem = 1;
-int sotaqso = 0; // no sota
-int paddlepolarity = 0; // 0 = . Left, 1 = - Left
+
 
 int page = 1;
 
@@ -74,6 +90,7 @@ bool abbrAvailable = false;
 int mode = 1;
 int farnsworth = 2;
 
+
 Button2 button; 
 ESPRotary rotary;
 
@@ -81,16 +98,32 @@ ESPRotary rotary;
 Morse morse(P_AUDIO);
 
 
+
+void update_PaddleLatch() {
+  if (paddlepolarity) {
+    if (digitalRead(P_DASH) == LOW) keyerControl |= DIT_L;  // DITS   on TIP ( Stereo Plug )
+    if (digitalRead(P_DOT) == LOW) keyerControl |= DASH_L; // DASHES on RING ( Stereo Plug )
+  } else {
+    if (digitalRead(P_DOT) == LOW) keyerControl |= DIT_L;  // DITS   on TIP ( Stereo Plug )
+    if (digitalRead(P_DASH) == LOW) keyerControl |= DASH_L; // DASHES on RING ( Stereo Plug )
+  }
+}
+
+
 // Initializing the Arduino
 void setup() {
   Serial.begin(115200);
+  delay(2000);
   
+  interCharTimer = 4294967000;                       // almost the biggest possible unsigned long number :-) - do not output extra spaces!                       
+  interWordTimer = 4294967000; 
   
   
   pinMode(P_DOT, INPUT_PULLUP);
   pinMode(P_DASH, INPUT_PULLUP); 
 
-
+  keyerState   = IDLE;
+ 
   rotary.begin(P_DOWN, P_UP, CLICKS_PER_STEP);
   rotary.setChangedHandler(rotate);
 
@@ -103,56 +136,66 @@ void setup() {
   qsoDisplay::initDisplay(); // Init Display
   
   currentMillis = millis();
-  qsoDisplay::addString(">");
+  
   Serial.println();
   if (morse.LittleFSActive) {
     Serial.println("LittleFS Active");
   } else {
     Serial.println("Unable to activate LittleFS");
   }
-  Serial.println("Setup CW Speed");
 
-  EEPROM.begin(512);
+  morse.sotaqso = sotaqso;
+  morse.frequency = frequency;
+
+ 
+
   int addr=0;
+  EEPROM.begin(512);
   addr += EEPROM.get(addr, actualWpm);
   addr += EEPROM.get(addr, actualFarnsWpm);
   addr += EEPROM.get(addr, sotaqso);
   addr += EEPROM.get(addr, paddlepolarity);
-  EEPROM.commit();
+  addr += EEPROM.get(addr, iambicab);
+  addr += EEPROM.get(addr, frequency);  
   EEPROM.end();
+
   morse.sotaqso = sotaqso;
+  morse.frequency = frequency;
   
   if (actualWpm < 5 || actualWpm > 61) {
-      Serial.println("Save!");
-      actualWpm = 20;
-      actualFarnsWpm = 0;
-      Serial.print("Setting WPM to ");
-    Serial.println(actualWpm);
-    Serial.print("Setting Farnsworth to ");
-    Serial.println(actualFarnsWpm);
+    actualWpm = 20;
+    actualFarnsWpm = 0;
+  }
 
-    EEPROM.begin(512);
-    addr=0;
-    addr += EEPROM.put(addr, actualWpm);
-    addr += EEPROM.put(addr, actualFarnsWpm);
-    addr += EEPROM.put(addr, sotaqso);
-    addr += EEPROM.put(addr, paddlepolarity);
-    EEPROM.end();    
-    
-  };
-
-
-
-
-
-    updateWpm();
+  Serial.println();
+  Serial.println("Setup CW Speed");
+  updateWpm();
   
+  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Polarity  %d\n",paddlepolarity);
+  Serial.printf("Iambic B mode %d\n",iambicab);
+  Serial.printf("Frequency  %d\n",morse.frequency);
+  Serial.printf("Frequency  %d\n",morse.frequencys[morse.frequency]);
+  
+
+  if (iambicab == 0) {
+      keyerControl = IAMBICA;
+  } else {
+      keyerControl = IAMBICB;
+  }
+      
+  
+  qsoDisplay::intro(actualWpm,actualFarnsWpm,morse.sotaqso,paddlepolarity,iambicab, frequency);  
+  qsoDisplay::addString(">");
   Serial.println("done");
 }
 
 // Main routine
 void loop()
 {
+  static long ktimer;
+  static long ctimer;
+  
 
   rotary.loop();
   button.loop();
@@ -164,86 +207,121 @@ void loop()
   
 
   if ( mode == 1 ) {
-    if (paddlepolarity) {
-      dahState = digitalRead(P_DOT);
-      ditState = digitalRead(P_DASH); 
-    } else {
-      ditState = digitalRead(P_DOT);
-      dahState  = digitalRead(P_DASH); 
-    }
+    
+    
     currentMillis = millis();
- 
-  if ((ditState == LOW)&(dahState == HIGH)) {       
-    LastElement = 1;
-    morse.dot();           // ... send a dot at the given elementLengthMs    
-    actSign = actSign + ".";
-    previousMillis = currentMillis;
-  } else if ((dahState == LOW)&(ditState == HIGH)) {  
-    LastElement = 2;      
-    morse.dash();       // ... send a dash at the given elementLengthMs  
-    actSign = actSign + "-";    
-    previousMillis = currentMillis;
-      
-  } 
 
-  if ((dahState == LOW)&(ditState == LOW) & (LastElement == 1)) {  
-    LastElement = 2;
-    morse.dash();  // ... send a dash at the given elementLengthMs  
-    actSign = actSign + "-";    
-    previousMillis = currentMillis;
-  }
-  
-  if ((dahState == LOW)&(ditState == LOW) & (LastElement == 2)) {  
-    LastElement = 1;
-    morse.dot();           // ... send a dot at the given elementLengthMs    
-    actSign = actSign + ".";
-    previousMillis = currentMillis;
-  }
-
-
-  
-  if (currentMillis - previousMillis > elementLengthMs*3){
-    if (actSign != "") {       
-        Serial.print(" ");
-        Serial.print(actSign);
-        txtSign = morse.encode(actSign);
-        actWord = actWord + txtSign; 
-        actSign = "";
-        previousMillis = currentMillis;
-      }
-  }
-
-  if (currentMillis - previousMillis > elementLengthMs*7){   
-      if (actWord != "") {
-        Serial.println();
-        Serial.print("Word: >");
-        Serial.print(actWord);
-        Serial.println("<");
-        morse.tlg = actWord;
-        morse.doQso();
-        Serial.print("State: "); Serial.print(morse.State);
-        Serial.print(" Type: "); Serial.println(morse.Type);  
-        //Serial.println(morse.nextStep);
-        if (!morse.nextStep){
-          qsoDisplay::printTelnet(actWord);
-        }       
+      switch (keyerState)
+  { case IDLE: if (millis() > interCharTimer) {             
+             actSign.concat(" ");            
+             txtSign = morse.encode(actSign);
+             actWord.concat(txtSign);           
+             Serial.print(actSign);             
+             actSign.clear();             
+             interCharTimer = 4294967000;                       // almost the biggest possible unsigned long number :-) - do not output extra spaces!             
+          }
+          if (millis() > interWordTimer) {
+            morse.tlg = actWord;
+            Serial.println(actWord);
+            if (actWord == "//?") {                             
+              qsoDisplay::intro(actualWpm,actualFarnsWpm,morse.sotaqso,paddlepolarity,iambicab, frequency);
+              actWord.clear();  
+            } else {          
+              morse.doQso();
+            
+              Serial.print("State: "); Serial.print(morse.State);
+              Serial.print(" Type: "); Serial.println(morse.Type);  
         
-        actWord = "";  
+              if (!morse.nextStep){
+                qsoDisplay::printTelnet(actWord);
+              }               
+              actWord.clear();  
+              interWordTimer = 4294967000;                       // almost the biggest possible unsigned long number :-) - do not output extra spaces!             
+            }
+          }
 
-      }
-    } 
+              
+              if ((digitalRead(P_DOT) == LOW) || (digitalRead(P_DASH) == LOW) || (keyerControl & 0x03)) {
+                 update_PaddleLatch(); 
+                 keyerState = CHK_DIT; 
+               } 
+             
+               break;
+ 
+    case CHK_DIT: if (keyerControl & DIT_L) { 
+                    keyerControl |= DIT_PROC;
+                    // Some of PP5VX's fingers are here...
+                    // ktimer = ditTime;    // If you don't use Weight Control
+                    ktimer = elementLengthMs;     // Dit Time+Weight
+                    
+                    keyerState = KEYED_PREP;
+                    //Serial.print(".");
+                    actSign.concat(".");
+                  } else keyerState = CHK_DASH;
+                  break;
+ 
+    case CHK_DASH: if (keyerControl & DASH_L) { // Some of PP5VX's fingers are here...
+                   
+                     ktimer = elementLengthMs*3; // Dash Time+Weight                                         
+                     //Serial.print("-");
+                     actSign.concat("-");
+                     keyerState = KEYED_PREP; 
+                   } else keyerState = IDLE;
+                  break;
+ 
+    case KEYED_PREP: 
+                     //tone(ST_Pin, key_tone);                     
+                     ktimer += millis();
+                     keyerControl &= ~(DIT_L + DASH_L);
+                     keyerState = KEYED;
+                     morse.cwOn();
+                     break;
+ 
+    case KEYED: if (millis() > ktimer) { 
+                  morse.cwOff();
+                  
+                  //noTone(ST_Pin);                                    
+                  ktimer = millis()+elementLengthMs;  
+                  keyerState = INTER_ELEMENT; 
+                  interWordTimer = millis() + 7*elementLengthMs;
+                  interCharTimer = millis() + 3*elementLengthMs;
+                } else if (keyerControl & IAMBICB) {
+                  update_PaddleLatch();
+                }                
+                break;
+ 
+    case INTER_ELEMENT: update_PaddleLatch();
+                  //      interWordTimer = millis() + 2*ditTime;
+                        if (millis() > ktimer) { 
+                          
+                          if (keyerControl & DIT_PROC) {  
+                            keyerControl &= ~(DIT_L + DIT_PROC);
+                            keyerState = CHK_DASH; 
+                          } else  { keyerControl &= ~(DASH_L);
+                            keyerState = IDLE;                                    
+                          }
+                        } 
+                      
+                        
+                        
+                        
+                        break;
+  } // end Case
+
+
+
+
+
+
+  
   }
 }
 
 
 void updateWpm()
 {
-  Serial.print("Setting WPM to ");
-  Serial.println(actualWpm);
-  Serial.print("Setting Farnsworth to ");
-  Serial.println(actualFarnsWpm);
-      // Calculate millisecond bit length from new WPM
   updateElementLength();
+
   
 }
 
@@ -257,33 +335,54 @@ void updateElementLength()
   Serial.print("elementLengthMs: ");
   Serial.println(elementLengthMs);
 
+  
   if (actualFarnsWpm > 0) {
     if (actualWpm >= actualFarnsWpm) exit;
     elementLengthMsFarns = 1200 / (actualWpm - actualFarnsWpm );
     Serial.print("elementLengthMsFarns: ");
     morse.farnsLength = elementLengthMsFarns;  
     Serial.println(elementLengthMsFarns);
+    morse.useFansw = true;
   }
 
   morse.dotLength = elementLengthMs;
   morse.farnsLength = elementLengthMsFarns;
-  morse.useFansw = true;
+  
   
 }
 
 
 int writeToEeprom(){
-  Serial.println("Save all!");
+  Serial.println("Save all to EEPROM!");
+
+  Serial.printf("actual WPM %d\n",actualWpm);
+  Serial.printf("Setting Farnsworth to %d\n",actualFarnsWpm);
+  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Polarity  %d\n",paddlepolarity);
+  Serial.printf("Iambic B mode %d\n",iambicab);
+  Serial.printf("Frequency  %d\n",morse.frequency);
+  Serial.printf("Frequency HZ %d\n",morse.frequencys[morse.frequency]);
 
   EEPROM.begin(512);
   int addr=0;
   addr += EEPROM.put(addr, actualWpm);
   addr += EEPROM.put(addr, actualFarnsWpm);
-  addr += EEPROM.put(addr, sotaqso);
+  addr += EEPROM.put(addr, morse.sotaqso);
   addr += EEPROM.put(addr, paddlepolarity);
-  EEPROM.commit();
+  addr += EEPROM.put(addr, iambicab);
+  addr += EEPROM.put(addr, morse.frequency);  
+  boolean rc = EEPROM.commit();
   EEPROM.end();
 
+  Serial.printf("EEprom commit variable is: %s\n", rc ? "true" : "false");  
+
+  Serial.printf("actual WPM %d\n",actualWpm);
+  Serial.printf("Setting Farnsworth to %d\n",actualFarnsWpm);
+  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Polarity  %d\n",paddlepolarity);
+  Serial.printf("Iambic B mode %d\n",iambicab);
+  Serial.printf("Frequency  %d\n",morse.frequency);
+  Serial.printf("Frequency  Hz %d\n",morse.frequencys[morse.frequency]);
   return 1;
 }
 
@@ -304,7 +403,7 @@ void doubleClick(Button2& btn) {
     menuitem = 1;
     lastMenuItem = 1;  
     qsoDisplay::prepareMenu();
-    qsoDisplay::printMenu(page, actualWpm, actualFarnsWpm, sotaqso);    
+    qsoDisplay::printMenu(page, actualWpm, actualFarnsWpm, morse.sotaqso);    
     rotary.setUpperBound(7);
     rotary.setLowerBound(0);
     rotary.resetPosition(1,false);
@@ -319,7 +418,7 @@ void singleClick(Button2& btn) {
       rotary.setUpperBound(7);
       rotary.setLowerBound(0);
       rotary.resetPosition(menuitem,false);
-      qsoDisplay::restsetMenuPointertoValues(menuitem);
+      qsoDisplay::resetMenuPointertoValues(menuitem);
       chvalue = false;
     } else {
       chvalue = true;      
@@ -339,24 +438,30 @@ void singleClick(Button2& btn) {
           case 3:
             qsoDisplay::setMenuPointertoValues(3);            
             break;
-          case 4: 
-            rotary.setUpperBound(11);
-            rotary.setLowerBound(-1);
-            rotary.resetPosition(actualFarnsWpm,false);                        
+          case 4:                                  
             qsoDisplay::setMenuPointertoValues(4);
           break;
           case 5:            
             qsoDisplay::setMenuPointertoValues(5);
           break;
           case 6:
+            rotary.setUpperBound(5);
+            rotary.setLowerBound(-1);
+            rotary.resetPosition(frequency,false);  
             qsoDisplay::setMenuPointertoValues(6);            
-            break;
+          break;
         default: break;                     
      }
     }   
   }
   Serial.println("click:  "); 
 }
+
+  /*String menu1 = "WPM";
+  String menu2 = "Farnsworth";
+  String menu3 = "SOTA Mode";
+  String menu4 = "Paddle Polarity";
+  String menu5 = "IAMBIC B";*/
 
 void rotate(ESPRotary& r) {
 
@@ -365,19 +470,18 @@ void rotate(ESPRotary& r) {
     menuitem = rotary.getPosition();   
     if (menuitem >= 4) {   
       if (page != 2) {
-        qsoDisplay::prepareMenu();
-        qsoDisplay::printMenu(2, actualFarnsWpm, morse.sotaqso, paddlepolarity);            
+        qsoDisplay::prepareMenu();        
+        qsoDisplay::printMenu(2, paddlepolarity, iambicab, morse.frequencys[frequency]);            
       }
       page = 2;                  
     } else {      
       if (page != 1) {
         qsoDisplay::prepareMenu();
-        qsoDisplay::printMenu(1, actualWpm, actualFarnsWpm, morse.sotaqso);
-        
+        qsoDisplay::printMenu(1, actualWpm, actualFarnsWpm, morse.sotaqso);        
       }
       page = 1;            
     }  
-    qsoDisplay::updateMenu(page, menuitem,lastMenuItem);        
+    qsoDisplay::updateMenu(page, menuitem,lastMenuItem);      
   } 
 
   if (inMenu && chvalue ) {    
@@ -391,21 +495,23 @@ void rotate(ESPRotary& r) {
         sotaqso = morse.sotaqso;        
         sotaqso =  (sotaqso == 0) ? 1 : 0;
         qsoDisplay::updateValues2d(19,sotaqso); 
-        morse.sotaqso = sotaqso;
-        
-    } else if (menuitem == 4) {           
-        actualFarnsWpm = rotary.getPosition();
-        qsoDisplay::updateValues(1,actualFarnsWpm);         
-    } else if (menuitem == 5){ 
-        sotaqso = morse.sotaqso;        
-        sotaqso =  (sotaqso == 0) ? 1 : 0;
-        qsoDisplay::updateValues2d(10,sotaqso); 
-        morse.sotaqso = sotaqso;
-    } else if (menuitem == 6) { 
+        morse.sotaqso = sotaqso;            
+    } else if (menuitem == 4){ 
         paddlepolarity =  (paddlepolarity == 0) ? 1 : 0;        
-        qsoDisplay::updateValues2d(19,paddlepolarity);         
+        qsoDisplay::updateValues2d(1,paddlepolarity);                 
+    } else if (menuitem == 5) {         
+        iambicab =  (iambicab == 0) ? 1 : 0;
+        qsoDisplay::updateValues2d(10,iambicab);                
+    } else if (menuitem == 6) {                   
+        frequency = rotary.getPosition();              
+        int freq = morse.frequencys[frequency];  
+        qsoDisplay::updateValues3d(19,freq); 
+        morse.frequency = frequency; 
+        
     }
-  } 
+  }
+
+     
 
   Serial.println("-----------------------------------------");
   Serial.print("menuitem: ");
@@ -417,6 +523,9 @@ void rotate(ESPRotary& r) {
  
   Serial.print("page: ");
   Serial.println(page);
+
+  
+  
 }
 
 
