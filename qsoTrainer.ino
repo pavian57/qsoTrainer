@@ -50,6 +50,7 @@ int sotaqso = 0; // no sota
 int paddlepolarity = 0; // 0 = . Left, 1 = - Left
 int iambicab = 0; // 0 = A, 1 = B
 int frequency = 1;
+int eepromused = 99;
 
 
 int ditState = 0;        
@@ -144,20 +145,31 @@ void setup() {
     Serial.println("Unable to activate LittleFS");
   }
 
-  morse.sotaqso = sotaqso;
-  morse.frequency = frequency;
-
- 
-
   int addr=0;
+  // addr = writeToEeprom();
+
+  
   EEPROM.begin(512);
-  addr += EEPROM.get(addr, actualWpm);
-  addr += EEPROM.get(addr, actualFarnsWpm);
-  addr += EEPROM.get(addr, sotaqso);
-  addr += EEPROM.get(addr, paddlepolarity);
-  addr += EEPROM.get(addr, iambicab);
-  addr += EEPROM.get(addr, frequency);  
+  EEPROM.get(addr, eepromused);
+  addr += sizeof(eepromused);
+  Serial.println(eepromused);
+  if (eepromused == 99) {
+    EEPROM.get(addr, actualWpm);
+    addr += sizeof(actualWpm);
+    EEPROM.get(addr, actualFarnsWpm);
+    addr += sizeof(actualFarnsWpm);
+    EEPROM.get(addr, sotaqso);
+    addr += sizeof(sotaqso);
+    EEPROM.get(addr, paddlepolarity);
+    addr += sizeof(paddlepolarity);
+    EEPROM.get(addr, iambicab);
+    addr += sizeof(iambicab);
+    EEPROM.get(addr, frequency);  
+  }
   EEPROM.end();
+  
+  
+
 
   morse.sotaqso = sotaqso;
   morse.frequency = frequency;
@@ -171,11 +183,12 @@ void setup() {
   Serial.println("Setup CW Speed");
   updateWpm();
   
-  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Sota mode %d\n",sotaqso);    
   Serial.printf("Polarity  %d\n",paddlepolarity);
   Serial.printf("Iambic B mode %d\n",iambicab);
-  Serial.printf("Frequency  %d\n",morse.frequency);
-  Serial.printf("Frequency  %d\n",morse.frequencys[morse.frequency]);
+  Serial.printf("Frequency  %d\n",frequency);  
+  Serial.printf("Frequency  Hz %d\n",morse.frequencys[morse.frequency]);
+  
   
 
   if (iambicab == 0) {
@@ -183,9 +196,8 @@ void setup() {
   } else {
       keyerControl = IAMBICB;
   }
-      
-  
-  qsoDisplay::intro(actualWpm,actualFarnsWpm,morse.sotaqso,paddlepolarity,iambicab, frequency);  
+  int freq = morse.frequencys[frequency];    
+  qsoDisplay::intro(actualWpm,actualFarnsWpm, sotaqso,paddlepolarity,iambicab, freq);  
   qsoDisplay::addString(">");
   Serial.println("done");
 }
@@ -211,8 +223,9 @@ void loop()
     
     currentMillis = millis();
 
-      switch (keyerState)
-  { case IDLE: if (millis() > interCharTimer) {             
+  switch (keyerState) { 
+    
+    case IDLE: if (millis() > interCharTimer) {             
              actSign.concat(" ");            
              txtSign = morse.encode(actSign);
              actWord.concat(txtSign);           
@@ -224,7 +237,9 @@ void loop()
             morse.tlg = actWord;
             Serial.println(actWord);
             if (actWord == "//?") {                             
-              qsoDisplay::intro(actualWpm,actualFarnsWpm,morse.sotaqso,paddlepolarity,iambicab, frequency);
+              int freq = morse.frequencys[frequency];
+              qsoDisplay::intro(actualWpm,actualFarnsWpm,morse.sotaqso,paddlepolarity,iambicab, freq);
+              qsoDisplay::addString(">");
               actWord.clear();  
             } else {          
               morse.doQso();
@@ -284,7 +299,7 @@ void loop()
                   ktimer = millis()+elementLengthMs;  
                   keyerState = INTER_ELEMENT; 
                   interWordTimer = millis() + 7*elementLengthMs;
-                  interCharTimer = millis() + 3*elementLengthMs;
+                  interCharTimer = millis() + 2*elementLengthMs;
                 } else if (keyerControl & IAMBICB) {
                   update_PaddleLatch();
                 }                
@@ -353,36 +368,73 @@ void updateElementLength()
 
 
 int writeToEeprom(){
-  Serial.println("Save all to EEPROM!");
-
+  /*Serial.println("Save all to EEPROM!");
+  Serial.println("--------------------1-------------------------");
   Serial.printf("actual WPM %d\n",actualWpm);
   Serial.printf("Setting Farnsworth to %d\n",actualFarnsWpm);
-  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Sota mode %d\n",sotaqso);  
+  Serial.printf("Sota mode morse %d\n",morse.sotaqso);  
   Serial.printf("Polarity  %d\n",paddlepolarity);
   Serial.printf("Iambic B mode %d\n",iambicab);
-  Serial.printf("Frequency  %d\n",morse.frequency);
-  Serial.printf("Frequency HZ %d\n",morse.frequencys[morse.frequency]);
+  Serial.printf("Frequency  %d\n",frequency);
+  Serial.printf("Frequency morse %d\n",morse.frequency);
+  Serial.printf("Frequency HZ %d\n",morse.frequencys[morse.frequency]);*/
 
-  EEPROM.begin(512);
   int addr=0;
-  addr += EEPROM.put(addr, actualWpm);
-  addr += EEPROM.put(addr, actualFarnsWpm);
-  addr += EEPROM.put(addr, morse.sotaqso);
-  addr += EEPROM.put(addr, paddlepolarity);
-  addr += EEPROM.put(addr, iambicab);
-  addr += EEPROM.put(addr, morse.frequency);  
+  EEPROM.begin(512);  
+  EEPROM.put(addr, eepromused);
+  addr += sizeof(eepromused);
+  EEPROM.put(addr, actualWpm);
+  addr += sizeof(actualWpm);
+  EEPROM.put(addr, actualFarnsWpm);
+  addr += sizeof(actualFarnsWpm);
+  EEPROM.put(addr, sotaqso);
+  addr += sizeof(sotaqso);
+  EEPROM.put(addr, paddlepolarity);
+  addr += sizeof(paddlepolarity);
+  EEPROM.put(addr, iambicab);
+  addr += sizeof(iambicab);
+  EEPROM.put(addr, frequency);  
   boolean rc = EEPROM.commit();
   EEPROM.end();
 
+  /*Serial.println("--------------------2-------------------------");
   Serial.printf("EEprom commit variable is: %s\n", rc ? "true" : "false");  
-
   Serial.printf("actual WPM %d\n",actualWpm);
   Serial.printf("Setting Farnsworth to %d\n",actualFarnsWpm);
-  Serial.printf("Sota mode %d\n",morse.sotaqso);
+  Serial.printf("Sota mode %d\n",sotaqso);  
+  Serial.printf("Sota mode morse %d\n",morse.sotaqso);  
   Serial.printf("Polarity  %d\n",paddlepolarity);
   Serial.printf("Iambic B mode %d\n",iambicab);
-  Serial.printf("Frequency  %d\n",morse.frequency);
-  Serial.printf("Frequency  Hz %d\n",morse.frequencys[morse.frequency]);
+  Serial.printf("Frequency  %d\n",frequency);
+  Serial.printf("Frequency morse %d\n",morse.frequency);
+  Serial.printf("Frequency HZ %d\n",morse.frequencys[morse.frequency]);*/
+
+  
+
+  /*addr=0;
+  EEPROM.begin(512);
+  actualWpm =   EEPROM.read(addr);
+  actualFarnsWpm = EEPROM.read(addr+sizeof(uint8_t));
+  sotaqso = EEPROM.read(addr+sizeof(uint8_t));
+  paddlepolarity = EEPROM.read(addr+sizeof(uint8_t));
+  iambicab = EEPROM.read(addr+sizeof(uint8_t));
+  frequency = EEPROM.read(addr+sizeof(uint8_t));  
+  EEPROM.end();
+
+
+  Serial.println("--------------------3-------------------------");
+  Serial.printf("actual WPM %d\n",actualWpm);
+  Serial.printf("Setting Farnsworth to %d\n",actualFarnsWpm);
+  Serial.printf("Sota mode %d\n",sotaqso);  
+  Serial.printf("Sota mode morse %d\n",morse.sotaqso);  
+  Serial.printf("Polarity  %d\n",paddlepolarity);
+  Serial.printf("Iambic B mode %d\n",iambicab);
+  Serial.printf("Frequency  %d\n",frequency);
+  Serial.printf("Frequency morse %d\n",morse.frequency);
+  Serial.printf("Frequency HZ %d\n",morse.frequencys[morse.frequency]);
+  Serial.println("----------------------------------------------");*/
+
   return 1;
 }
 
