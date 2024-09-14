@@ -47,11 +47,12 @@ void intro(int wpm, int fans, int sota, int polari, int iambic, int freq){
   oled.setCursor(0,0);
   oled.printf("Wpm=%d, Farnsworth=%d\n", wpm,fans);  
   oled.printf("Sota=%d, Iambicb=%d\n", sota, iambic);
-  oled.printf("Paddle Polarity=%d\n", polari);  
+  oled.printf("Polarity=%d Freq: %d\n", polari, freq );  
+  //oled.printf("Frquency=%d\n", );  
   oled.display();  
   delay(5000);
   oled.clear();
- // oled.display();
+  oled.display();
   
 
 }
