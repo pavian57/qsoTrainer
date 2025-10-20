@@ -36,7 +36,7 @@ give `**btbt**` again to leave the Callsign mode, the reset button does the same
 
 give `**veve**` again to leave the Abbreviation  mode, the reset button does the same.
 
-6. If you give a `**arar**`, the qsoTrainer will echo CW Abbreviations you give back with the paddle.  
+6. If you give a `**arar**`, the qsoTrainer will echo random character you give back with the paddle.  
 
 give `**arar**` again to leave the Abbreviation  mode, the reset button does the same. Each time you send "ar", it will increase the number of characters, "ba" decreases.
 
