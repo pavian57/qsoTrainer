@@ -6,12 +6,13 @@
 
 #ifndef Morse_H
 #define Morse_H
+#define RANDOM_REG32  ESP8266_DREG(0x20E44)
 
 #include <Arduino.h>
 
 namespace qsoTrainer
 {
-
+	
 	static const struct
 	{
 		const char letter, *code;

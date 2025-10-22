@@ -24,7 +24,7 @@ namespace qsoTrainer
     _calllength = 6;
     _repeats = 1;
     sotaqso = false;
-    randomSeed(analogRead(A0));   
+    randomSeed(RANDOM_REG32);   
     if (LittleFS.begin()) {
       LittleFSActive = true;
     }
@@ -194,13 +194,13 @@ namespace qsoTrainer
     //Serial.printf("numChars %d\n",_numChars);
 
     if (_numChars == 1) {
-      _ourChar =  MorseMap[random(0, 35)].letter;
+      _ourChar =  MorseMap[random(0, 36)].letter;
       return _ourChar;
     } else {
       _ourChar.clear();
     }
     while (i < _numChars) {
-        _ourChar += MorseMap[random(0, 35)].letter;
+        _ourChar += MorseMap[random(0, 36)].letter;
         i++;
       }
     
@@ -250,11 +250,11 @@ namespace qsoTrainer
     {
      
       String callsign;
-      callsign += MorseMap[random(0, 25)].letter;
-      callsign += MorseMap[random(0, 25)].letter;
-      callsign += MorseMap[random(26, 35)].letter;
+      callsign += MorseMap[random(0, 27)].letter;
+      callsign += MorseMap[random(0, 27)].letter;
+      callsign += MorseMap[random(26, 36)].letter;
       while (i < 3) {
-        callsign += MorseMap[random(0, 25)].letter;
+        callsign += MorseMap[random(0, 27)].letter;
         i++;
       }
       return callsign;
@@ -263,7 +263,7 @@ namespace qsoTrainer
     {
       File f1 = LittleFS.open("/names.txt", "r");
       File fx = LittleFS.open("/names.idx", "r");
-      randomSeed(millis());
+      
       fsize = fx.size();
       randNumber = random(0, (fsize / 8) - 1);
 
@@ -289,9 +289,9 @@ namespace qsoTrainer
     int i = 0;
     
     String rst = "";
-    rst += MorseMap[random(28, 30)].letter;
-    rst += MorseMap[random(29, 35)].letter;
-    rst += MorseMap[random(29, 35)].letter;
+    rst += MorseMap[random(27, 31)].letter;
+    rst += MorseMap[random(27, 36)].letter;
+    rst += MorseMap[random(27, 36)].letter;
     return rst;
   }
 
@@ -303,13 +303,13 @@ namespace qsoTrainer
     long randNumber;
     String summit = "";
     if (!LittleFS.exists(F("/summitslist.idx"))  &&  LittleFSActive){
-      summit += MorseMap[random(0, 25)].letter;
-      summit += MorseMap[random(0, 25)].letter;
+      summit += MorseMap[random(0, 27)].letter;
+      summit += MorseMap[random(0, 27)].letter;
       summit += "/";
-      summit += MorseMap[random(0, 25)].letter;
-      summit += MorseMap[random(0, 25)].letter;
+      summit += MorseMap[random(0, 27)].letter;
+      summit += MorseMap[random(0, 27)].letter;
       while (i < 3) {
-        summit += MorseMap[random(26, 35)].letter;
+        summit += MorseMap[random(26, 36)].letter;
         i++;
       }
       return summit;
@@ -390,7 +390,7 @@ namespace qsoTrainer
     
     if (strstr(tlg.c_str(), "<ve><ve>") != NULL && Type != TRAINING) 
     {
-      randomSeed(analogRead(A0));   
+      
       qsoDisplay::addString("<ve>");
       tlg.replace("<ve><ve>", "");
       if (Type == ABBREVIATION) {
@@ -438,7 +438,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<bt><bt>") != NULL)
     {
-      randomSeed(analogRead(A0));   
+      
       qsoDisplay::addString("<bt>");
       if (Type == CALLSIGN) {
         Type = NONE;
@@ -454,7 +454,7 @@ namespace qsoTrainer
     }
     if (strstr(tlg.c_str(), "<ar><ar>") != NULL)
     {
-      randomSeed(analogRead(A0));   
+      
       qsoDisplay::addString("<ar>");
       if (Type == CHAR) {
         Type = NONE;
