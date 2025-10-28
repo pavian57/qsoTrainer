@@ -332,19 +332,13 @@ void loop()
   }
 }
 
-
-void updateWpm()
-{
-  updateElementLength();
-
-  
-}
-
 /*
  * Calculate dit length in milliseconds from WPM
  */
-void updateElementLength()
+
+void updateWpm()
 {
+
   elementLengthMs = 1200 / actualWpm;
   morse.dotLength = elementLengthMs;
   Serial.print("elementLengthMs: ");
